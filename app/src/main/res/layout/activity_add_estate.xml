@@ -20,105 +20,91 @@
             android:text="Ajouter un bien immobilier"
             android:textSize="20sp" />
 
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textEstateAgent"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Agent en charge du bien"
-            android:textSize="14sp"/>
+            android:layout_marginBottom="10dp"
+            android:hint="Agent en charge du bien"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/inputEstateAgent"
-            android:layout_width="200sp"
-            android:layout_height="40sp"
-            android:textSize="12sp"
-            android:layout_marginBottom="20dp" />
-
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textType"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Type de bien"
-            android:textSize="14sp"/>
+            android:layout_marginBottom="10dp"
+            android:hint="Type de bien"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/inputType"
-            android:layout_width="200sp"
-            android:layout_height="40sp"
-            android:textSize="12sp"
-            android:layout_marginBottom="20dp" />
-
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textPrice"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Prix de vente"
-            android:textSize="14sp"/>
+            android:layout_marginBottom="10dp"
+            android:hint="Prix de vente"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/inputPrice"
-            android:layout_width="200sp"
-            android:layout_height="40sp"
-            android:textSize="12sp"
-            android:layout_marginBottom="20dp" />
-
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textSurface"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Surface en m2"
-            android:textSize="14sp"/>
+            android:layout_marginBottom="10dp"
+            android:hint="Surface en m2"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/inputSurface"
-            android:layout_width="200sp"
-            android:layout_height="40sp"
-            android:textSize="12sp"
-            android:layout_marginBottom="20dp" />
-
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textNumberOfRooms"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre de pièces"
-            android:textSize="14sp"/>
+            android:layout_marginBottom="10dp"
+            android:hint="Nombre de pièces"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/inputNumberOfRooms"
-            android:layout_width="200sp"
-            android:layout_height="40sp"
-            android:textSize="12sp"
-            android:layout_marginBottom="20dp" />
-
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textFullDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description complète"
-            android:textSize="14sp"/>
-
-        <EditText
-            android:id="@+id/inputFullDescription"
             android:layout_width="match_parent"
-            android:layout_height="120sp"
-            android:textSize="12sp"
-            android:inputType="textMultiLine"
-            android:layout_marginBottom="20dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:hint="Description complète"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Adresse"
-            android:textSize="14sp"/>
-
-        <EditText
-            android:id="@+id/inputAddress"
             android:layout_width="match_parent"
-            android:layout_height="40sp"
-            android:textSize="12sp"
-            android:inputType="textMultiLine"
-            android:layout_marginBottom="20dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Adresse"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:layout_width="wrap_content"
