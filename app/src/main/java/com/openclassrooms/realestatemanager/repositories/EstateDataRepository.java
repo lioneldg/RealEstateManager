@@ -17,4 +17,9 @@ public class EstateDataRepository {
         return this.estateDao.getAllEstates();
     }
 
+    // CREATE
+    public void createEstate(Estate estate) {
+        estateDao.addEstate(estate);
+    }
+
 }

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Estate {
     @PrimaryKey(autoGenerate = true)
-    private final long id;
+    private long id;
 
     @NonNull
     private final String estateAgent;
@@ -30,8 +30,7 @@ public class Estate {
     @NonNull
     private final String estateAddress;
 
-    public Estate(long id, @NonNull String estateAgent, @NonNull String estateType,  @NonNull int estatePrice,  @NonNull int estateSurface,  @NonNull int estateNumberOfRooms, @NonNull String estateFullDescription, @NonNull String estateAddress) {
-        this.id = id;
+    public Estate(@NonNull String estateAgent, @NonNull String estateType,  @NonNull int estatePrice,  @NonNull int estateSurface,  @NonNull int estateNumberOfRooms, @NonNull String estateFullDescription, @NonNull String estateAddress) {
         this.estateAgent = estateAgent;
         this.estateType = estateType;
         this.estatePrice = estatePrice;
@@ -39,6 +38,10 @@ public class Estate {
         this.estateNumberOfRooms = estateNumberOfRooms;
         this.estateFullDescription = estateFullDescription;
         this.estateAddress = estateAddress;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public long getId() {

@@ -60,4 +60,16 @@ public class Utils {
             return false;
         }
     }
+
+    public static boolean isLetterHyphenAndSpace(String str){
+        return str.matches("[A-Za-z -_]+");
+    };
+
+    public static boolean isAlphanumHyphenAndSpace(String str){
+        return str.matches("[A-Za-z0-9 -_]+");
+    };
+
+    public static boolean isNumber(String str){
+        return str.matches("[0-9]+");
+    };
 }
