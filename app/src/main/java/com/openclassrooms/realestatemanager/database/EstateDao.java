@@ -18,5 +18,5 @@ public interface EstateDao {
 
     // CREATE
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long addEstate(Estate estate);
+    void addEstate(Estate estate);
 }

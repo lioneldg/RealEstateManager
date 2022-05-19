@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.openclassrooms.realestatemanager.AddEstate" />
+        <activity android:name="com.openclassrooms.realestatemanager.DetailActivity" />
     </application>
 
 </manifest>

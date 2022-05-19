@@ -15,14 +15,15 @@ public class Estate {
     @NonNull
     private final String estateType;
 
-    @NonNull
     private final int estatePrice;
 
-    @NonNull
     private final int estateSurface;
 
-    @NonNull
     private final int estateNumberOfRooms;
+
+    private final int estateNbrOfBedrooms;
+
+    private final int estateNbrOfBathrooms;
 
     @NonNull
     private final String estateFullDescription;
@@ -30,14 +31,20 @@ public class Estate {
     @NonNull
     private final String estateAddress;
 
-    public Estate(@NonNull String estateAgent, @NonNull String estateType,  @NonNull int estatePrice,  @NonNull int estateSurface,  @NonNull int estateNumberOfRooms, @NonNull String estateFullDescription, @NonNull String estateAddress) {
+    @NonNull
+    private final String estateCity;
+
+    public Estate(@NonNull String estateAgent, @NonNull String estateType, int estatePrice, int estateSurface, int estateNumberOfRooms, int estateNbrOfBedrooms, int estateNbrOfBathrooms,  @NonNull String estateFullDescription, @NonNull String estateAddress, @NonNull String estateCity) {
         this.estateAgent = estateAgent;
         this.estateType = estateType;
         this.estatePrice = estatePrice;
         this.estateSurface = estateSurface;
         this.estateNumberOfRooms = estateNumberOfRooms;
+        this.estateNbrOfBedrooms = estateNbrOfBedrooms;
+        this.estateNbrOfBathrooms = estateNbrOfBathrooms;
         this.estateFullDescription = estateFullDescription;
         this.estateAddress = estateAddress;
+        this.estateCity = estateCity;
     }
 
     public void setId(long id) {
@@ -58,19 +65,24 @@ public class Estate {
         return estateType;
     }
 
-    @NonNull
     public int getEstatePrice() {
         return estatePrice;
     }
 
-    @NonNull
     public int getEstateSurface() {
         return estateSurface;
     }
 
-    @NonNull
     public int getEstateNumberOfRooms() {
         return estateNumberOfRooms;
+    }
+
+    public int getEstateNbrOfBedrooms() {
+        return estateNbrOfBedrooms;
+    }
+
+    public int getEstateNbrOfBathrooms() {
+        return estateNbrOfBathrooms;
     }
 
     @NonNull
@@ -81,5 +93,10 @@ public class Estate {
     @NonNull
     public String getEstateAddress() {
         return estateAddress;
+    }
+
+    @NonNull
+    public String getEstateCity() {
+        return estateCity;
     }
 }

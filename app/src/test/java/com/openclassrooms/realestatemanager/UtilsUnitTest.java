@@ -30,7 +30,7 @@ public class UtilsUnitTest {
 
     @Test
     public void getTodayDate(){
-        Date date = new Date(1650623208492l);
+        Date date = new Date(1650623208492L);
         assertEquals("22/04/2022", Utils.getFormattedDate(date));
     }
 

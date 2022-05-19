@@ -33,6 +33,7 @@ public class EstateViewModel extends ViewModel {
     }
 
 
+    @Nullable
     public LiveData<List<Estate>> getAllEstates() {
         return this.allEstates;
     }
@@ -40,8 +41,4 @@ public class EstateViewModel extends ViewModel {
     public void createEstate(Estate estate) {
         executor.execute(() -> estateDataSource.createEstate(estate));
     }
-
-    //public void deleteTask(Task task) {
-    //    executor.execute(() -> taskDataSource.deleteTask(task));
-    //}
 }

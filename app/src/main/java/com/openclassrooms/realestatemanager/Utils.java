@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import java.text.DateFormat;
@@ -54,22 +55,29 @@ public class Utils {
     }
     
     public static Boolean isInternetAvailable(NetworkInfo activeNetwork) {
-        if (activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)) {
-            return true;
-        } else {
-            return false;
-        }
+        return activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
     }
 
     public static boolean isLetterHyphenAndSpace(String str){
         return str.matches("[A-Za-z -_]+");
-    };
+    }
 
     public static boolean isAlphanumHyphenAndSpace(String str){
         return str.matches("[A-Za-z0-9 -_]+");
-    };
+    }
 
     public static boolean isNumber(String str){
         return str.matches("[0-9]+");
     };
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
+    public static boolean isLandscapeOrientation(Context context) {
+        int orientation = context.getResources().getConfiguration().orientation;
+        return orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
 }
