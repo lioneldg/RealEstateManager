@@ -1,13 +1,15 @@
 package com.openclassrooms.realestatemanager;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.openclassrooms.realestatemanager.databinding.FragmentDetailBinding;
 import com.openclassrooms.realestatemanager.model.Estate;
 import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
@@ -27,6 +29,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView detailNumberOfBathrooms;
     private TextView detailNumberOfBedrooms;
     private TextView detailLocation;
+    private RecyclerView detailPhotosRV;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,10 +41,18 @@ public class DetailActivity extends AppCompatActivity {
         detailNumberOfBathrooms = binding.detailNumberOfBathrooms;
         detailNumberOfBedrooms = binding.detailNumberOfBedrooms;
         detailLocation = binding.detailLocation;
-        View view = binding.getRoot();
-        setContentView(view);
+        detailPhotosRV = binding.detailPhotosRV;
+        detailPhotosRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        setContentView(binding.getRoot());
         configureViewModel();
         getAllEstates();
+    }
+
+    private void setAdapter(Estate estate){
+        if(estate.getPhotosListString() != null) {
+            ArrayList<String> photos = Utils.fromStringListToArrayList(estate.getPhotosListString());
+            detailPhotosRV.setAdapter(new PhotosRVAdapter(photos, null, estate.getIsSold()));
+        }
     }
 
     // Configuring ViewModel
@@ -64,6 +75,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public void setCurrentEstate(int position) {
         Estate estate = estates.get(position);
+        setAdapter(estate);
         detailDescription.setText(estate.getEstateFullDescription());
         detailSurface.setText(String.valueOf(estate.getEstateSurface()));
         detailNumberOfRooms.setText(String.valueOf(estate.getEstateNumberOfRooms()));

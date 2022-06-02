@@ -10,7 +10,7 @@
     <string name="add">Add</string>
     <string name="edit">Edit</string>
     <string name="search">Search</string>
-    <string name="add_estate">Add an estate</string>
+    <string name="add_estate">Enter an estate</string>
     <string name="estateAgent">Estate agent</string>
     <string name="estateType">Estate type</string>
     <string name="sellPrice">Sell price</string>
@@ -21,4 +21,9 @@
     <string name="address">Address</string>
     <string name="city">City</string>
     <string name="addPictures">Add pictures</string>
+    <string name="picture_of_estate">Picture of estate</string>
+    <string name="sold">Sold !!!</string>
+    <string name="delete_button">Delete button</string>
+    <string name="Add_photos">Please add photos</string>
+    <string name="not_sold">Not sold</string>
 </resources>

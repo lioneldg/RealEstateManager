@@ -1,21 +1,36 @@
 package com.openclassrooms.realestatemanager;
 
+import static com.openclassrooms.realestatemanager.Utils.REQUEST_IMAGE_CAPTURE;
+import static com.openclassrooms.realestatemanager.Utils.REQUEST_IMAGE_PICK;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Toast;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
-import com.openclassrooms.realestatemanager.databinding.ActivityAddEstateBinding;
+import com.openclassrooms.realestatemanager.databinding.ActivityEditEstateBinding;
 import com.openclassrooms.realestatemanager.model.Estate;
 import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.viewmodel.Injection;
 import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class AddEstate extends AppCompatActivity {
+public class EditEstateActivity extends AppCompatActivity {
 
     private TextInputLayout textEstateAgent;
     private TextInputLayout textType;
@@ -27,21 +42,49 @@ public class AddEstate extends AppCompatActivity {
     private TextInputLayout textFullDescription;
     private TextInputLayout textAddress;
     private TextInputLayout textCity;
+    private ImageButton buttonAddGalleryImage;
+    private ImageButton buttonAddPhoto;
+    private Button buttonIsSold;
     private FloatingActionButton buttonSubmitAll;
+    private RecyclerView detailPhotosRV;
     private EstateViewModel estateViewModel;
     private Estate newEstate;
+    private ArrayList<String> photos = new ArrayList<>();
+    private final ArrayList<Estate> estates = new ArrayList<>();
+    private boolean isEditionMode = false;
+    private boolean isSold = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isEditionMode = !(getIntent().getIntExtra("position", -1) == -1);
         this.bindingView();
         this.configureViewModel();
+        this.getAllEstates();
         this.listenButtons();
         
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(photos.size() > 0) {
+            outState.putString("photos", Utils.fromArrayListStringToStringList(photos));
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String p = savedInstanceState.getString("photos");
+        if(p != null && !p.equals("")){
+            photos = Utils.fromStringListToArrayList(p);
+            setAdapter();
+        }
+    }
+
     private void bindingView(){
-        com.openclassrooms.realestatemanager.databinding.ActivityAddEstateBinding binding = ActivityAddEstateBinding.inflate(getLayoutInflater());
+        ActivityEditEstateBinding binding = ActivityEditEstateBinding.inflate(getLayoutInflater());
         textEstateAgent = binding.textEstateAgent;
         textType = binding.textType;
         textPrice = binding.textPrice;
@@ -52,21 +95,75 @@ public class AddEstate extends AppCompatActivity {
         textFullDescription = binding.textFullDescription;
         textAddress = binding.textAddress;
         textCity = binding.textCity;
+        buttonAddGalleryImage = binding.buttonAddGalleryImage;
+        buttonAddPhoto = binding.buttonAddPhotos;
+        buttonIsSold = binding.buttonSold;
+        detailPhotosRV = binding.addPhotosRV;
+        detailPhotosRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         buttonSubmitAll = binding.floatingActionButtonSubmitAll;
+        if(!Utils.hasCamera(this)){
+            buttonAddPhoto.setVisibility(View.INVISIBLE);
+        }
         View view = binding.getRoot();
         setContentView(view);
     }
 
+    private void setIsSoldButton(boolean isSold) {
+        this.isSold = isSold;
+        buttonIsSold.setText(isSold ? R.string.not_sold : R.string.sold);
+    }
+
+    protected ArrayList<String> getPhotos() {
+        return this.photos;
+    }
+
+    protected void setPhotos(ArrayList<String> photos) {
+        this.photos = photos;
+    }
+
+    protected void setAdapter(){
+        detailPhotosRV.setAdapter(new PhotosRVAdapter(photos, this, isSold));
+    }
+
     private void listenButtons(){
+        buttonAddGalleryImage.setOnClickListener(view -> Utils.pickPhoto(this));
+        buttonAddPhoto.setOnClickListener(view -> Utils.takePhoto(this));
+        buttonIsSold.setOnClickListener(view -> {
+            this.setIsSoldButton(!isSold);
+            setAdapter();
+        });
         buttonSubmitAll.setOnClickListener(view -> {
             newEstate = this.inputsController();
             if(newEstate != null) {
-                estateViewModel.createEstate(newEstate);
+                if (isEditionMode){
+                    estateViewModel.updateEstate(newEstate);
+                } else {
+                    estateViewModel.createEstate(newEstate);
+                }
                 this.finish();
             }
         });
     }
-    
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            String fileName = Utils.storeBitmap(this, imageBitmap);
+            photos.add(fileName);
+            setAdapter();
+        }
+        else if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK) {
+            Uri photoUri = data.getData();
+            Bitmap selectedImage = Utils.loadFromUri(photoUri, this);
+            String fileName = Utils.storeBitmap(this, selectedImage);
+            photos.add(fileName);
+            setAdapter();
+        }
+    }
+
     private Estate inputsController() {
         String valueEstateAgent = Objects.requireNonNull(textEstateAgent.getEditText()).getText().toString();
         String valueType = Objects.requireNonNull(textType.getEditText()).getText().toString();
@@ -88,6 +185,7 @@ public class AddEstate extends AppCompatActivity {
         boolean isErrorFullDescription = false;
         boolean isErrorAddress = false;
         boolean isErrorCity = false;
+        boolean isErrorPhotos = false;
         if(!Utils.isLetterHyphenAndSpace(valueEstateAgent)){
             textEstateAgent.setError(getString(R.string.textOnlyError));
             isErrorEstateAgent = true;
@@ -184,9 +282,33 @@ public class AddEstate extends AppCompatActivity {
         } else {
             textCity.setError(null);
         }
-        
-        if(!isErrorEstateAgent && !isErrorType && !isErrorPrice && !isErrorAddress && !isErrorFullDescription && !isErrorNumberOfRooms && !isErrorNumberOfBedrooms && !isErrorNumberOfBathrooms && !isErrorSurface && !isErrorCity){
-            return new Estate(valueEstateAgent, valueType, Integer.parseInt(valuePrice), Integer.parseInt(valueSurface), Integer.parseInt(valueNumberOfRooms), Integer.parseInt(valueNumberOfBedrooms), Integer.parseInt(valueNumberOfBathrooms), valueFullDescription, valueAddress, valueCity);
+
+        String photoListString = Utils.fromArrayListStringToStringList(photos);
+        if(photos.size() == 0) {
+            isErrorPhotos = true;
+            Toast.makeText(this, R.string.Add_photos , Toast.LENGTH_LONG).show();
+        }
+
+        if(!isErrorEstateAgent && !isErrorType && !isErrorPrice && !isErrorAddress && !isErrorFullDescription && !isErrorNumberOfRooms && !isErrorNumberOfBedrooms && !isErrorNumberOfBathrooms && !isErrorSurface && !isErrorCity && !isErrorPhotos){
+            Estate estate;
+            if(isEditionMode) {
+                estate = estates.get(getIntent().getIntExtra("position", 0));
+            } else {
+                estate = new Estate();
+            }
+            estate.setEstateAgent(valueEstateAgent);
+            estate.setEstateType(valueType);
+            estate.setEstatePrice(Integer.parseInt(valuePrice));
+            estate.setEstateSurface(Integer.parseInt(valueSurface));
+            estate.setEstateNumberOfRooms(Integer.parseInt(valueNumberOfRooms));
+            estate.setEstateNbrOfBedrooms(Integer.parseInt(valueNumberOfBedrooms));
+            estate.setEstateNbrOfBathrooms(Integer.parseInt(valueNumberOfBathrooms));
+            estate.setEstateFullDescription(valueFullDescription);
+            estate.setEstateAddress(valueAddress);
+            estate.setEstateCity(valueCity);
+            estate.setPhotosListString(photoListString);
+            estate.setIsSold(isSold);
+            return estate;
         } else {
             return null;
         }
@@ -196,5 +318,36 @@ public class AddEstate extends AppCompatActivity {
     private void configureViewModel(){
         ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(this);
         this.estateViewModel = new ViewModelProvider(this, mViewModelFactory).get(EstateViewModel.class);
+        this.estateViewModel.init();
+    }
+
+    private void getAllEstates(){
+        assert this.estateViewModel.getAllEstates() != null;
+        this.estateViewModel.getAllEstates().observe(this, this::updateEstatesList);
+    }
+
+    private void updateEstatesList(List<Estate> estates) {
+        this.estates.clear();
+        this.estates.addAll(estates);
+        setCurrentEstate(getIntent().getIntExtra("position", 0));
+    }
+
+    public void setCurrentEstate(int position) {
+        if(isEditionMode) {
+            Estate estate = estates.get(position);
+            photos = Utils.fromStringListToArrayList(estate.getPhotosListString());
+            Objects.requireNonNull(textEstateAgent.getEditText()).setText(estate.getEstateAgent());
+            Objects.requireNonNull(textType.getEditText()).setText(estate.getEstateType());
+            Objects.requireNonNull(textPrice.getEditText()).setText(String.valueOf(estate.getEstatePrice()));
+            Objects.requireNonNull(textSurface.getEditText()).setText(String.valueOf(estate.getEstateSurface()));
+            Objects.requireNonNull(textNumberOfRooms.getEditText()).setText(String.valueOf(estate.getEstateNumberOfRooms()));
+            Objects.requireNonNull(textNumberOfBedrooms.getEditText()).setText(String.valueOf(estate.getEstateNbrOfBedrooms()));
+            Objects.requireNonNull(textNumberOfBathrooms.getEditText()).setText(String.valueOf(estate.getEstateNbrOfBathrooms()));
+            Objects.requireNonNull(textFullDescription.getEditText()).setText(estate.getEstateFullDescription());
+            Objects.requireNonNull(textAddress.getEditText()).setText(estate.getEstateAddress());
+            Objects.requireNonNull(textCity.getEditText()).setText(estate.getEstateCity());
+            this.setIsSoldButton(estate.getIsSold());
+            setAdapter();
+        }
     }
 }

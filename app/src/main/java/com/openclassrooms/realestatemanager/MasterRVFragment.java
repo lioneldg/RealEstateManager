@@ -18,11 +18,12 @@ import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EstateRVFragment extends Fragment {
+public class MasterRVFragment extends Fragment {
     private RecyclerView rv;
     @NonNull
     private final ArrayList<Estate> estates = new ArrayList<>();
     private EstateViewModel estateViewModel;
+    private int bindPosition;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class EstateRVFragment extends Fragment {
     }
 
     protected void setCurrentDetailView(int bindPosition){
+        this.bindPosition = bindPosition;
         DetailFragment detailFragment = (DetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentDetail);
         if(detailFragment != null && detailFragment.isVisible()){
             detailFragment.setCurrentEstate(bindPosition);
@@ -68,5 +70,9 @@ public class EstateRVFragment extends Fragment {
             myIntent.putExtra("position", bindPosition);
             startActivity(myIntent);
         }
+    }
+
+    public int getBindPosition() {
+        return bindPosition;
     }
 }

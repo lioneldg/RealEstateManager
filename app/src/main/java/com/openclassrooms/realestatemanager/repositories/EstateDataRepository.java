@@ -22,4 +22,7 @@ public class EstateDataRepository {
         estateDao.addEstate(estate);
     }
 
+    //UPDATE
+    public void updateEstate(Estate estate) {estateDao.updateEstate(estate);}
+
 }

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.openclassrooms.realestatemanager.databinding.FragmentDetailBinding;
 import com.openclassrooms.realestatemanager.model.Estate;
 import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
@@ -26,6 +30,7 @@ public class DetailFragment extends Fragment {
     private TextView detailNumberOfBathrooms;
     private TextView detailNumberOfBedrooms;
     private TextView detailLocation;
+    private RecyclerView detailPhotosRV;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,11 +42,20 @@ public class DetailFragment extends Fragment {
         detailNumberOfBathrooms = binding.detailNumberOfBathrooms;
         detailNumberOfBedrooms = binding.detailNumberOfBedrooms;
         detailLocation = binding.detailLocation;
+        detailPhotosRV = binding.detailPhotosRV;
+        detailPhotosRV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         if(Utils.isTablet(requireContext()) && Utils.isLandscapeOrientation(requireContext())) {
             configureViewModel();
             getAllEstates();
         }
         return binding.getRoot();
+    }
+
+    private void setAdapter(Estate estate){
+        if(estate.getPhotosListString() != null) {
+            ArrayList<String> photos = Utils.fromStringListToArrayList(estate.getPhotosListString());
+            detailPhotosRV.setAdapter(new PhotosRVAdapter(photos, null, estate.getIsSold()));
+        }
     }
 
     // Configuring ViewModel
@@ -68,12 +82,22 @@ public class DetailFragment extends Fragment {
     }
 
     public void setCurrentEstate(int position) {
-        Estate estate = estates.get(position);
-        detailDescription.setText(estate.getEstateFullDescription());
-        detailSurface.setText(String.valueOf(estate.getEstateSurface()));
-        detailNumberOfRooms.setText(String.valueOf(estate.getEstateNumberOfRooms()));
-        detailNumberOfBathrooms.setText(String.valueOf(estate.getEstateNbrOfBathrooms()));
-        detailNumberOfBedrooms.setText(String.valueOf(estate.getEstateNbrOfBedrooms()));
-        detailLocation.setText(estate.getEstateAddress());
+        if(estates.size() > 0) {
+            Estate estate = estates.get(position);
+            setAdapter(estate);
+            detailDescription.setText(estate.getEstateFullDescription());
+            detailSurface.setText(String.valueOf(estate.getEstateSurface()));
+            detailNumberOfRooms.setText(String.valueOf(estate.getEstateNumberOfRooms()));
+            detailNumberOfBathrooms.setText(String.valueOf(estate.getEstateNbrOfBathrooms()));
+            detailNumberOfBedrooms.setText(String.valueOf(estate.getEstateNbrOfBedrooms()));
+            detailLocation.setText(estate.getEstateAddress());
+        } else {
+            addEstate();
+        }
+    }
+
+    private void addEstate(){
+        Intent myIntent = new Intent(getActivity(), EditEstateActivity.class);
+        startActivity(myIntent);
     }
 }

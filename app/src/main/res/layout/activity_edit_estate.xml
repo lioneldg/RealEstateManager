@@ -28,6 +28,7 @@
             android:hint="@string/estateAgent"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textEstateAgentField"
                 android:inputType="textPersonName"
                 android:maxLength="25"
                 android:layout_width="match_parent"
@@ -42,6 +43,7 @@
             android:hint="@string/estateType"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textTypeField"
                 android:inputType="text"
                 android:maxLength="20"
                 android:layout_width="match_parent"
@@ -56,6 +58,7 @@
             android:hint="@string/sellPrice"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textPriceField"
                 android:inputType="number"
                 android:maxLength="10"
                 android:layout_width="match_parent"
@@ -70,6 +73,7 @@
             android:hint="@string/surface"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textSurfaceField"
                 android:inputType="number"
                 android:maxLength="6"
                 android:layout_width="match_parent"
@@ -84,6 +88,7 @@
             android:hint="@string/numberOfRooms"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textNumberOfRoomsField"
                 android:inputType="number"
                 android:maxLength="2"
                 android:layout_width="match_parent"
@@ -98,6 +103,7 @@
             android:hint="@string/numberOfBedrooms"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textNumberOfBedroomsField"
                 android:inputType="number"
                 android:maxLength="2"
                 android:layout_width="match_parent"
@@ -112,6 +118,7 @@
             android:hint="@string/numberOfBathrooms"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textNumberOfBathroomsField"
                 android:inputType="number"
                 android:maxLength="2"
                 android:layout_width="match_parent"
@@ -126,6 +133,7 @@
             android:hint="@string/fullDescription"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textFullDescriptionField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"/>
@@ -139,6 +147,7 @@
             android:hint="@string/address"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textAddressField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPostalAddress"/>
@@ -152,18 +161,64 @@
             android:hint="@string/city"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textCityField"
                 android:inputType="text"
                 android:maxLength="30"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/buttonAddPhotos"
+
+
+
+
+
+
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/addPictures"
-            android:layout_marginBottom="20dp" />
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:id="@+id/titleAddPictures"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/addPictures"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="30dp"
+                android:textSize="20sp" />
+
+            <ImageButton
+                android:src="@drawable/ic_baseline_image_24"
+                android:id="@+id/buttonAddGalleryImage"
+                android:backgroundTint="@color/colorAccent"
+                android:layout_marginRight="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/addPictures" />
+
+            <ImageButton
+                android:src="@drawable/ic_baseline_photo_camera_24"
+                android:id="@+id/buttonAddPhotos"
+                android:backgroundTint="@color/colorAccent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/addPictures" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/addPhotosRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/buttonSold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sold"
+            android:layout_marginTop="25dp"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floatingActionButtonSubmitAll"

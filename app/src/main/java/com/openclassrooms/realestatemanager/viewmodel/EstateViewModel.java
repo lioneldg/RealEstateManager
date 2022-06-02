@@ -41,4 +41,8 @@ public class EstateViewModel extends ViewModel {
     public void createEstate(Estate estate) {
         executor.execute(() -> estateDataSource.createEstate(estate));
     }
+
+    public void updateEstate(Estate estate) {
+        executor.execute(()-> estateDataSource.updateEstate(estate));
+    }
 }

@@ -4,7 +4,7 @@
     <string name="textOnlyError">Ne pas saisir de chiffre ou de caractères spéciaux</string>
     <string name="mandatoryInput">Saisie obligatoire</string>
     <string name="enterANumber">Saisir un nombre</string>
-    <string name="add_estate">Ajouter un bien immobilier</string>
+    <string name="add_estate">Entrer un bien immobilier</string>
     <string name="estateAgent">Agent en charge du bien</string>
     <string name="estateType">Type de bien</string>
     <string name="sellPrice">Prix de vente</string>
@@ -15,11 +15,16 @@
     <string name="fullDescription">Description complète</string>
     <string name="address">Adresse</string>
     <string name="city">Ville</string>
-    <string name="addPictures">ajouter des photos</string>
+    <string name="addPictures">Ajouter des photos</string>
     <string name="media">Media</string>
     <string name="description">Description</string>
     <string name="pictureOfEstate">Photos de bien</string>
     <string name="add">Ajouter</string>
     <string name="edit">Editer</string>
     <string name="search">Chercher</string>
+    <string name="picture_of_estate">Image du bien</string>
+    <string name="sold">Vendu !!!</string>
+    <string name="delete_button">Bouton supprimer</string>
+    <string name="Add_photos">Veuillez ajouter des photos</string>
+    <string name="not_sold">Non vendu</string>
 </resources>

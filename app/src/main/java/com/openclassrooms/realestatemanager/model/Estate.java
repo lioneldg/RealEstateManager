@@ -9,43 +9,31 @@ public class Estate {
     @PrimaryKey(autoGenerate = true)
     private long id;
 
-    @NonNull
-    private final String estateAgent;
+    private String estateAgent;
 
-    @NonNull
-    private final String estateType;
+    private String estateType;
 
-    private final int estatePrice;
+    private int estatePrice;
 
-    private final int estateSurface;
+    private int estateSurface;
 
-    private final int estateNumberOfRooms;
+    private int estateNumberOfRooms;
 
-    private final int estateNbrOfBedrooms;
+    private int estateNbrOfBedrooms;
 
-    private final int estateNbrOfBathrooms;
+    private int estateNbrOfBathrooms;
 
-    @NonNull
-    private final String estateFullDescription;
+    private String estateFullDescription;
 
-    @NonNull
-    private final String estateAddress;
+    private String estateAddress;
 
-    @NonNull
-    private final String estateCity;
+    private String estateCity;
 
-    public Estate(@NonNull String estateAgent, @NonNull String estateType, int estatePrice, int estateSurface, int estateNumberOfRooms, int estateNbrOfBedrooms, int estateNbrOfBathrooms,  @NonNull String estateFullDescription, @NonNull String estateAddress, @NonNull String estateCity) {
-        this.estateAgent = estateAgent;
-        this.estateType = estateType;
-        this.estatePrice = estatePrice;
-        this.estateSurface = estateSurface;
-        this.estateNumberOfRooms = estateNumberOfRooms;
-        this.estateNbrOfBedrooms = estateNbrOfBedrooms;
-        this.estateNbrOfBathrooms = estateNbrOfBathrooms;
-        this.estateFullDescription = estateFullDescription;
-        this.estateAddress = estateAddress;
-        this.estateCity = estateCity;
-    }
+    private String photosListString;
+
+    private boolean isSold;
+
+    public Estate(){}
 
     public void setId(long id) {
         this.id = id;
@@ -98,5 +86,62 @@ public class Estate {
     @NonNull
     public String getEstateCity() {
         return estateCity;
+    }
+
+    public String getPhotosListString() {
+        return photosListString;
+    }
+
+    public boolean getIsSold() {
+        return isSold;
+    }
+
+    public void setEstateAgent(@NonNull String estateAgent) {
+        this.estateAgent = estateAgent;
+    }
+
+    public void setEstateType(@NonNull String estateType) {
+        this.estateType = estateType;
+    }
+
+    public void setEstatePrice(int estatePrice) {
+        this.estatePrice = estatePrice;
+    }
+
+    public void setEstateSurface(int estateSurface) {
+        this.estateSurface = estateSurface;
+    }
+
+    public void setEstateNumberOfRooms(int estateNumberOfRooms) {
+        this.estateNumberOfRooms = estateNumberOfRooms;
+    }
+
+    public void setEstateNbrOfBedrooms(int estateNbrOfBedrooms) {
+        this.estateNbrOfBedrooms = estateNbrOfBedrooms;
+    }
+
+    public void setEstateNbrOfBathrooms(int estateNbrOfBathrooms) {
+        this.estateNbrOfBathrooms = estateNbrOfBathrooms;
+    }
+
+    public void setEstateFullDescription(@NonNull String estateFullDescription) {
+        this.estateFullDescription = estateFullDescription;
+    }
+
+    public void setEstateAddress(@NonNull String estateAddress) {
+        this.estateAddress = estateAddress;
+    }
+
+    public void setEstateCity(@NonNull String estateCity) {
+        this.estateCity = estateCity;
+    }
+
+    public void setPhotosListString(@NonNull String photosListString) {
+        this.photosListString = photosListString;
+    }
+
+    public void setIsSold(boolean sold) {
+
+        isSold = sold;
     }
 }

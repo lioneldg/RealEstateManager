@@ -1,5 +1,4 @@
 package com.openclassrooms.realestatemanager;
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -8,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 this.addEstate();
                 return true;
             case R.id.action_edit:
-                /* DO EDIT */
+                this.editEstate();
                 return true;
             case R.id.action_search:
                 /* DO SEARCH */
@@ -52,7 +53,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addEstate(){
-        Intent myIntent = new Intent(MainActivity.this, AddEstate.class);
+        Intent myIntent = new Intent(MainActivity.this, EditEstateActivity.class);
         startActivity(myIntent);
     }
+
+    private void editEstate(){
+        int bindPosition = ((MasterRVFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragmentMaster))).getBindPosition();
+        Intent myIntent = new Intent(MainActivity.this, EditEstateActivity.class);
+        myIntent.putExtra("position", bindPosition);
+        startActivity(myIntent);
+    }
+
+
+
 }
