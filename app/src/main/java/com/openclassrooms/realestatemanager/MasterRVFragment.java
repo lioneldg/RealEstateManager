@@ -28,7 +28,7 @@ public class MasterRVFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.openclassrooms.realestatemanager.databinding.FragmentEstateRvBinding binding = FragmentEstateRvBinding.inflate(getLayoutInflater());
+        FragmentEstateRvBinding binding = FragmentEstateRvBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         rv = binding.estateRv;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -39,7 +39,7 @@ public class MasterRVFragment extends Fragment {
     }
 
     private void setAdapter(){
-        rv.setAdapter(new EstateRVAdapter(estates, this));
+        rv.setAdapter(new MasterRVAdapter(estates, this));
     }
 
     // Configuring ViewModel
@@ -55,9 +55,17 @@ public class MasterRVFragment extends Fragment {
     }
 
     private void updateEstatesList(List<Estate> estates) {
+        if(estates.size() == 0) {
+            addEstate();
+        }
         this.estates.clear();
         this.estates.addAll(estates);
         setAdapter();
+    }
+
+    private void addEstate(){
+        Intent myIntent = new Intent(getActivity(), EditEstateActivity.class);
+        startActivity(myIntent);
     }
 
     protected void setCurrentDetailView(int bindPosition){
@@ -70,6 +78,7 @@ public class MasterRVFragment extends Fragment {
             myIntent.putExtra("position", bindPosition);
             startActivity(myIntent);
         }
+        setAdapter();
     }
 
     public int getBindPosition() {

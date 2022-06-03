@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,13 +90,6 @@ public class DetailFragment extends Fragment {
             detailNumberOfBathrooms.setText(String.valueOf(estate.getEstateNbrOfBathrooms()));
             detailNumberOfBedrooms.setText(String.valueOf(estate.getEstateNbrOfBedrooms()));
             detailLocation.setText(estate.getEstateAddress());
-        } else {
-            addEstate();
         }
-    }
-
-    private void addEstate(){
-        Intent myIntent = new Intent(getActivity(), EditEstateActivity.class);
-        startActivity(myIntent);
     }
 }

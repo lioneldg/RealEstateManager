@@ -12,12 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.openclassrooms.realestatemanager.model.Estate;
 import java.util.ArrayList;
 
-public class EstateRVAdapter extends RecyclerView.Adapter<EstateRVAdapter.MyViewHolder> {
+public class MasterRVAdapter extends RecyclerView.Adapter<MasterRVAdapter.MyViewHolder> {
     @NonNull
     private final ArrayList<Estate> estates;
     MasterRVFragment masterRVFragment;
 
-    public EstateRVAdapter(@NonNull ArrayList<Estate> estates, MasterRVFragment masterRVFragment) {
+    public MasterRVAdapter(@NonNull ArrayList<Estate> estates, MasterRVFragment masterRVFragment) {
         this.estates = estates;
         this.masterRVFragment = masterRVFragment;
     }
@@ -33,7 +33,7 @@ public class EstateRVAdapter extends RecyclerView.Adapter<EstateRVAdapter.MyView
         return new MyViewHolder(view);
     }
 
-    public void onBindViewHolder(@NonNull EstateRVAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MasterRVAdapter.MyViewHolder holder, int position) {
         Estate estate = estates.get(position);
         holder.display(estate, position, masterRVFragment);
     }
@@ -59,6 +59,10 @@ public class EstateRVAdapter extends RecyclerView.Adapter<EstateRVAdapter.MyView
             Context context = masterRVFragment.requireActivity().getApplicationContext();
             this.masterRVFragment = masterRVFragment;
             this.bindPosition = bindPosition;
+            int detailPosition = masterRVFragment.getBindPosition();
+            if(detailPosition == bindPosition && Utils.isTablet(context) && Utils.isLandscapeOrientation(context)){
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.colorSelection));
+            }
             if(estate.getPhotosListString() != null) {
                 ArrayList<String> photos = Utils.fromStringListToArrayList(estate.getPhotosListString());
                 Bitmap photo = Utils.getBitmapFromFileName(photos.get(0), 150, context);

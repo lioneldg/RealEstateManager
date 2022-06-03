@@ -1,6 +1,10 @@
 package com.openclassrooms.realestatemanager;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,10 +34,12 @@ public class DetailActivity extends AppCompatActivity {
     private TextView detailNumberOfBedrooms;
     private TextView detailLocation;
     private RecyclerView detailPhotosRV;
+    private int position;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        position = getIntent().getIntExtra("position", 0);
         FragmentDetailBinding binding = FragmentDetailBinding.inflate(getLayoutInflater());
         detailDescription = binding.detailDescription;
         detailSurface = binding.detailSurface;
@@ -46,6 +52,12 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         configureViewModel();
         getAllEstates();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 
     private void setAdapter(Estate estate){
@@ -70,7 +82,7 @@ public class DetailActivity extends AppCompatActivity {
     private void updateEstatesList(List<Estate> estates) {
         this.estates.clear();
         this.estates.addAll(estates);
-        setCurrentEstate(getIntent().getIntExtra("position", 0));
+        setCurrentEstate(position);
     }
 
     public void setCurrentEstate(int position) {
@@ -82,5 +94,39 @@ public class DetailActivity extends AppCompatActivity {
         detailNumberOfBathrooms.setText(String.valueOf(estate.getEstateNbrOfBathrooms()));
         detailNumberOfBedrooms.setText(String.valueOf(estate.getEstateNbrOfBedrooms()));
         detailLocation.setText(estate.getEstateAddress());
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        menu.removeItem(R.id.action_search);
+        return true;
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                this.addEstate();
+                return true;
+            case R.id.action_edit:
+                this.editEstate();
+                return true;
+            case R.id.action_search:
+                /* DO SEARCH */
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void addEstate(){
+        finish();
+        Intent myIntent = new Intent(DetailActivity.this, EditEstateActivity.class);
+        startActivity(myIntent);
+    }
+
+    private void editEstate(){
+        Intent myIntent = new Intent(DetailActivity.this, EditEstateActivity.class);
+        myIntent.putExtra("position", position);
+        startActivity(myIntent);
     }
 }
