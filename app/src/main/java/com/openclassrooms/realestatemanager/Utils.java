@@ -20,10 +20,21 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.openclassrooms.realestatemanager.model.PositionLatLng;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +42,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Philippe on 21/02/2018.
@@ -210,5 +227,66 @@ public class Utils {
     public static  ArrayList<String> fromStringListToArrayList(String string) {
         String[] parts = string.split(",");
         return new ArrayList<>(Arrays.asList(parts));
+    }
+
+    public static String urlRequest(String url) {
+        StringBuilder placesBuilder = new StringBuilder();
+        try {
+
+            URL requestUrl = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) requestUrl.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                if (inputStream != null) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        placesBuilder.append(line).append("\n");
+                    }
+                }
+            } else {
+                Log.i("test", "Unsuccessful HTTP Response Code: " + responseCode);
+            }
+        } catch (
+                MalformedURLException e) {
+            Log.e("test", "Error processing Places API URL", e);
+        } catch (
+                IOException e) {
+            Log.e("test", "Error connecting to Places API", e);
+        }
+        return placesBuilder.toString();
+    }
+
+    public static PositionLatLng addressToPositionExecutor(String address, Context context) {
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address.replace(' ', '+') + "&key=" + context.getString(R.string.google_maps_api_key);
+        PositionLatLng positionLatLng = null;
+        String urlRequestResult = Utils.urlRequest(url);
+        //execute query
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<PositionLatLng> future = executorService.submit(() -> {
+            JSONObject resultObject = new JSONObject(urlRequestResult);
+            JSONArray results = resultObject.getJSONArray("results");
+            JSONObject resultBody = results.getJSONObject(0);
+            JSONObject geometry = resultBody.getJSONObject("geometry");
+            JSONObject location = geometry.getJSONObject("location");
+            String lat = location.optString("lat");
+            String lng = location.optString("lng");
+            PositionLatLng _pos = new PositionLatLng();
+            _pos.setLat(lat);
+            _pos.setLng(lng);
+            return _pos;
+        });
+        try {
+            positionLatLng = future.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return positionLatLng;
     }
 }

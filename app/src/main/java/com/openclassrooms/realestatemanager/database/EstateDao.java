@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.database;
 
+import android.database.Cursor;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -16,6 +18,9 @@ public interface EstateDao {
     // READ
     @Query("SELECT * FROM estate")
     LiveData<List<Estate>> getAllEstates();
+
+    @Query("SELECT * FROM estate")
+    Cursor getAllEstatesWithCursor();
 
     // CREATE
     @Insert(onConflict = OnConflictStrategy.REPLACE)
