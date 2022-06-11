@@ -2,6 +2,8 @@ package com.openclassrooms.realestatemanager;
 
 import static android.content.ContentValues.TAG;
 
+import static com.openclassrooms.realestatemanager.BuildConfig.MAPS_API_KEY;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -16,11 +18,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-
-import com.openclassrooms.realestatemanager.model.PositionLatLng;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,15 +38,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Philippe on 21/02/2018.
@@ -208,10 +201,6 @@ public class Utils {
         return file.getName();
     }
 
-    public static String[] getFilesNamesList(Context context){
-        return context.fileList();
-    }
-
     public static String fromArrayListStringToStringList(ArrayList<String> list) {
         StringBuilder string= new StringBuilder();
         for(int i = 0; i < list.size(); i++) {
@@ -261,32 +250,162 @@ public class Utils {
         return placesBuilder.toString();
     }
 
-    public static PositionLatLng addressToPositionExecutor(String address, Context context) {
-        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address.replace(' ', '+') + "&key=" + context.getString(R.string.google_maps_api_key);
-        PositionLatLng positionLatLng = null;
-        String urlRequestResult = Utils.urlRequest(url);
-        //execute query
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<PositionLatLng> future = executorService.submit(() -> {
+    public static String placeSearchNearBy(String lat, String lng){
+        String placesSearchStr = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
+                "json?location="+lat+","+lng+
+                "&rankby=distance"+
+                "&types=point_of_interest"+
+                "&key="+
+                MAPS_API_KEY;
+        return urlRequest(placesSearchStr);
+    }
+
+    public static String getPointsOfInterest(String lat, String lng, Context context) {
+        String urlRequestResult = placeSearchNearBy(lat, lng);
+        Set<String> pointsOfInterestSet = new HashSet<>();
+        String pointsOfInterestString = null;
+        try {
             JSONObject resultObject = new JSONObject(urlRequestResult);
             JSONArray results = resultObject.getJSONArray("results");
-            JSONObject resultBody = results.getJSONObject(0);
-            JSONObject geometry = resultBody.getJSONObject("geometry");
-            JSONObject location = geometry.getJSONObject("location");
-            String lat = location.optString("lat");
-            String lng = location.optString("lng");
-            PositionLatLng _pos = new PositionLatLng();
-            _pos.setLat(lat);
-            _pos.setLng(lng);
-            return _pos;
-        });
-        try {
-            positionLatLng = future.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+            for (int i = 0; results.length() > i; i++) {
+                JSONObject place = new JSONObject(results.get(i).toString());
+                JSONArray types = place.getJSONArray("types");
+                for (int j = 0; types.length() > j; j++) {
+                    String interest = types.get(j).toString();
+                    switch (interest) {
+                        case "airport":
+                            pointsOfInterestSet.add(context.getString(R.string.airport));
+                            break;
+                        case "amusement_park":
+                            pointsOfInterestSet.add(context.getString(R.string.amusement_park));
+                            break;
+                        case "aquarium":
+                            pointsOfInterestSet.add(context.getString(R.string.aquarium));
+                            break;
+                        case "art_gallery":
+                            pointsOfInterestSet.add(context.getString(R.string.art_gallery));
+                            break;
+                        case "atm":
+                            pointsOfInterestSet.add(context.getString(R.string.atm));
+                            break;
+                        case "bakery":
+                            pointsOfInterestSet.add(context.getString(R.string.bakery));
+                            break;
+                        case "bank":
+                            pointsOfInterestSet.add(context.getString(R.string.bank));
+                            break;
+                        case "bar":
+                            pointsOfInterestSet.add(context.getString(R.string.bar));
+                            break;
+                        case "beauty_salon":
+                            pointsOfInterestSet.add(context.getString(R.string.beauty_salon));
+                            break;
+                        case "bus_station":
+                            pointsOfInterestSet.add(context.getString(R.string.bus));
+                            break;
+                        case "cafe":
+                            pointsOfInterestSet.add(context.getString(R.string.cafe));
+                            break;
+                        case "church":
+                            pointsOfInterestSet.add(context.getString(R.string.church));
+                            break;
+                        case "city_hall":
+                            pointsOfInterestSet.add(context.getString(R.string.city_hall));
+                            break;
+                        case "dentist":
+                            pointsOfInterestSet.add(context.getString(R.string.dentist));
+                            break;
+                        case "doctor":
+                            pointsOfInterestSet.add(context.getString(R.string.doctor));
+                            break;
+                        case "drugstore":
+                            pointsOfInterestSet.add(context.getString(R.string.drugstore));
+                            break;
+                        case "florist":
+                            pointsOfInterestSet.add(context.getString(R.string.florist));
+                            break;
+                        case "gas_station":
+                            pointsOfInterestSet.add(context.getString(R.string.gas_station));
+                            break;
+                        case "gym":
+                            pointsOfInterestSet.add(context.getString(R.string.gym));
+                            break;
+                        case "hair_care":
+                            pointsOfInterestSet.add(context.getString(R.string.hair_care));
+                            break;
+                        case "hospital":
+                            pointsOfInterestSet.add(context.getString(R.string.hospital));
+                            break;
+                        case "laundry":
+                            pointsOfInterestSet.add(context.getString(R.string.laundry));
+                            break;
+                        case "library":
+                            pointsOfInterestSet.add(context.getString(R.string.library));
+                            break;
+                        case "movie_theater":
+                            pointsOfInterestSet.add(context.getString(R.string.movie_theater));
+                            break;
+                        case "museum":
+                            pointsOfInterestSet.add(context.getString(R.string.museum));
+                            break;
+                        case "park":
+                            pointsOfInterestSet.add(context.getString(R.string.park));
+                            break;
+                        case "pharmacy":
+                            pointsOfInterestSet.add(context.getString(R.string.pharmacy));
+                            break;
+                        case "post_office":
+                            pointsOfInterestSet.add(context.getString(R.string.post_office));
+                            break;
+                        case "primary_school":
+                            pointsOfInterestSet.add(context.getString(R.string.primary_school));
+                            break;
+                        case "restaurant":
+                            pointsOfInterestSet.add(context.getString(R.string.restaurant));
+                            break;
+                        case "school":
+                            pointsOfInterestSet.add(context.getString(R.string.school));
+                            break;
+                        case "secondary_school":
+                            pointsOfInterestSet.add(context.getString(R.string.secondary_school));
+                            break;
+                        case "shopping_mall":
+                            pointsOfInterestSet.add(context.getString(R.string.shopping_mall));
+                            break;
+                        case "spa":
+                            pointsOfInterestSet.add(context.getString(R.string.spa));
+                            break;
+                        case "store":
+                            pointsOfInterestSet.add(context.getString(R.string.store));
+                            break;
+                        case "subway_station":
+                            pointsOfInterestSet.add(context.getString(R.string.subway_station));
+                            break;
+                        case "supermarket":
+                            pointsOfInterestSet.add(context.getString(R.string.supermarket));
+                            break;
+                        case "taxi_stand":
+                            pointsOfInterestSet.add(context.getString(R.string.taxi_stand));
+                            break;
+                        case "train_station":
+                            pointsOfInterestSet.add(context.getString(R.string.train_station));
+                            break;
+                        case "university":
+                            pointsOfInterestSet.add(context.getString(R.string.university));
+                            break;
+                        case "veterinary_care":
+                            pointsOfInterestSet.add(context.getString(R.string.veterinary));
+                            break;
+                        case "zoo":
+                            pointsOfInterestSet.add(context.getString(R.string.zoo));
+                            break;
+                    }
+                }
+            }
+            pointsOfInterestString = pointsOfInterestSet.toString().substring(1, pointsOfInterestSet.toString().length() - 1);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return positionLatLng;
+        return pointsOfInterestString;
     }
 }

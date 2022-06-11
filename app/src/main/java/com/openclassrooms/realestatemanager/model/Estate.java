@@ -1,8 +1,17 @@
 package com.openclassrooms.realestatemanager.model;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 @Entity
 public class Estate {
@@ -32,6 +41,16 @@ public class Estate {
     private String photosListString;
 
     private boolean isSold;
+
+    private  String lat;
+
+    private String lng;
+
+    private String pointsOfInterest;
+
+    private String entryDateStr;
+
+    private String soldDateStr;
 
     public Estate(){}
 
@@ -96,6 +115,54 @@ public class Estate {
         return isSold;
     }
 
+    public String getLat() {
+        return lat;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public String getPointsOfInterest() {
+        return pointsOfInterest;
+    }
+
+    public String getEntryDateStr() {
+        return entryDateStr;
+    }
+
+    public String getSoldDateStr() {
+        return soldDateStr;
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public Date getEntryDate() {
+        if(entryDateStr != null) {
+            try {
+                return new SimpleDateFormat("dd/MM/yyyy").parse(getEntryDateStr());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public Date getSoldDate() {
+        if(soldDateStr != null) {
+            try {
+                return new SimpleDateFormat("dd/MM/yyyy").parse(getSoldDateStr());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     public void setEstateAgent(@NonNull String estateAgent) {
         this.estateAgent = estateAgent;
     }
@@ -141,7 +208,42 @@ public class Estate {
     }
 
     public void setIsSold(boolean sold) {
-
         isSold = sold;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
+    public void setPointsOfInterest(String pointsOfInterest) {
+        this.pointsOfInterest = pointsOfInterest;
+    }
+
+    public void setEntryDateStr(String entryDateStr) {
+        this.entryDateStr = entryDateStr;
+    }
+
+    public void setSoldDateStr(String soldDateStr) {
+        this.soldDateStr = soldDateStr;
+    }
+
+    public void setEntryDate(Date entryDate) {
+        if(entryDate != null) {
+            @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            setEntryDateStr(dateFormat.format(entryDate));
+        }
+    }
+
+    public void setSoldDate(Date soldDate) {
+        if(soldDate == null) {
+            setSoldDateStr(null);
+        } else {
+            @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            setSoldDateStr(dateFormat.format(soldDate));
+        }
     }
 }

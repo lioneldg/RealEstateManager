@@ -3,12 +3,6 @@ package com.openclassrooms.realestatemanager;
 import static com.openclassrooms.realestatemanager.Utils.REQUEST_IMAGE_CAPTURE;
 import static com.openclassrooms.realestatemanager.Utils.REQUEST_IMAGE_PICK;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -18,6 +12,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.openclassrooms.realestatemanager.databinding.ActivityEditEstateBinding;
@@ -26,9 +26,17 @@ import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.viewmodel.Injection;
 import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class EditEstateActivity extends AppCompatActivity {
 
@@ -53,6 +61,8 @@ public class EditEstateActivity extends AppCompatActivity {
     private final ArrayList<Estate> estates = new ArrayList<>();
     private boolean isEditionMode = false;
     private boolean isSold = false;
+    private Date entryDate;
+    private Date soldDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,18 +139,28 @@ public class EditEstateActivity extends AppCompatActivity {
         buttonAddGalleryImage.setOnClickListener(view -> Utils.pickPhoto(this));
         buttonAddPhoto.setOnClickListener(view -> Utils.takePhoto(this));
         buttonIsSold.setOnClickListener(view -> {
+        boolean newIsSold = !isSold;
+        soldDate = newIsSold ? Calendar.getInstance().getTime() : null;
             this.setIsSoldButton(!isSold);
             setAdapter();
         });
         buttonSubmitAll.setOnClickListener(view -> {
             newEstate = this.inputsController();
             if(newEstate != null) {
-                if (isEditionMode){
-                    estateViewModel.updateEstate(newEstate);
+                newEstate.setEntryDate(entryDate);
+                newEstate.setSoldDate(soldDate);
+                if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(this))) {
+                    textAddress.setError(null);
+                    setPositionFromAddress(newEstate.getEstateAddress());
                 } else {
-                    estateViewModel.createEstate(newEstate);
+                    Toast.makeText(this, R.string.no_def_gps , Toast.LENGTH_LONG).show();
+                    if (isEditionMode){
+                        estateViewModel.updateEstate(newEstate);
+                    } else {
+                        estateViewModel.createEstate(newEstate);
+                    }
+                    this.finish();
                 }
-                this.finish();
             }
         });
     }
@@ -162,6 +182,48 @@ public class EditEstateActivity extends AppCompatActivity {
             photos.add(fileName);
             setAdapter();
         }
+    }
+
+    private void setPositionFromAddress(String address) {
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address.replace(' ', '+') + "&key=" + BuildConfig.MAPS_API_KEY;
+        //execute query
+        ArrayList <String> pos = new ArrayList<>();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        textAddress.setError(getString(R.string.address_not_found)); //set error everytime because if address is ok the activity will close
+        executor.execute(() -> {
+            String urlRequestResult = Utils.urlRequest(url);
+            try {
+                JSONObject resultObject = new JSONObject(urlRequestResult);
+                JSONArray results = resultObject.getJSONArray("results");
+                if(results.length() > 0) {
+                    JSONObject resultBody = results.getJSONObject(0);
+                    JSONObject geometry = resultBody.getJSONObject("geometry");
+                    JSONObject location = geometry.getJSONObject("location");
+                    pos.add(location.optString("lat"));
+                    pos.add(location.optString("lng"));
+                    newEstate.setLat(pos.get(0));
+                    newEstate.setLng(pos.get(1));
+                    if (isEditionMode) {
+                        estateViewModel.updateEstate(newEstate);
+                    } else {
+                        estateViewModel.createEstate(newEstate);
+                    }
+                    setPointsOfInterest(pos.get(0), pos.get(1));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void setPointsOfInterest(String lat, String lng) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            String interests = Utils.getPointsOfInterest(lat, lng, this);
+            newEstate.setPointsOfInterest(interests);
+            estateViewModel.updateEstate(newEstate);
+            this.finish();
+        });
     }
 
     private Estate inputsController() {
@@ -346,8 +408,13 @@ public class EditEstateActivity extends AppCompatActivity {
             Objects.requireNonNull(textFullDescription.getEditText()).setText(estate.getEstateFullDescription());
             Objects.requireNonNull(textAddress.getEditText()).setText(estate.getEstateAddress());
             Objects.requireNonNull(textCity.getEditText()).setText(estate.getEstateCity());
+            entryDate = estate.getEntryDate();
+            soldDate = estate.getSoldDate();
             this.setIsSoldButton(estate.getIsSold());
             setAdapter();
+        } else {
+            entryDate = Calendar.getInstance().getTime();
         }
+
     }
 }

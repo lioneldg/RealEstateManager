@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,25 +18,37 @@ import com.openclassrooms.realestatemanager.model.Estate;
 import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.viewmodel.Injection;
 import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DetailFragment extends Fragment {
     @NonNull
     private final ArrayList<Estate> estates = new ArrayList<>();
     private EstateViewModel estateViewModel;
+    private Estate estate;
     private TextView detailDescription;
+    private TextView detailPointsOfInterestTitle;
+    private TextView detailPointsOfInterest;
     private TextView detailSurface;
     private TextView detailNumberOfRooms;
     private TextView detailNumberOfBathrooms;
     private TextView detailNumberOfBedrooms;
     private TextView detailLocation;
     private RecyclerView detailPhotosRV;
+    private int currentEstate = 0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FragmentDetailBinding binding = FragmentDetailBinding.inflate(getLayoutInflater());
+        detailPointsOfInterestTitle = binding.detailPointsOfInterestTitle;
+        detailPointsOfInterest = binding.detailPointsOfInterest;
         detailDescription = binding.detailDescription;
         detailSurface = binding.detailSurface;
         detailNumberOfRooms = binding.detailNumberOfRooms;
@@ -70,20 +84,28 @@ public class DetailFragment extends Fragment {
     }
 
     private void updateEstatesList(List<Estate> estates) {
-        boolean isInitialisation = this.estates.isEmpty();
         this.estates.clear();
         this.estates.addAll(estates);
-        if(isInitialisation) {
-            setCurrentEstate(0);
-        } else {
-            setCurrentEstate(estates.size() - 1);
-        }
+        setCurrentEstate(currentEstate);
     }
 
     public void setCurrentEstate(int position) {
+        currentEstate = position;
         if(estates.size() > 0) {
-            Estate estate = estates.get(position);
+            estate = estates.get(position);
+            if(estate.getLat() == null || estate.getLng() == null){
+                setPositionFromAddress(estate.getEstateAddress());
+            }
+            if(estate.getPointsOfInterest() == null && estate.getLat() != null && estate.getLng() != null) {
+                setPointsOfInterest(estate.getLat(), estate.getLng());
+            }
             setAdapter(estate);
+            if(estate.getPointsOfInterest() != null) {
+                detailPointsOfInterestTitle.setVisibility(View.VISIBLE);
+                detailPointsOfInterest.setText(estate.getPointsOfInterest());
+            } else {
+                detailPointsOfInterestTitle.setVisibility(View.GONE);
+            }
             detailDescription.setText(estate.getEstateFullDescription());
             detailSurface.setText(String.valueOf(estate.getEstateSurface()));
             detailNumberOfRooms.setText(String.valueOf(estate.getEstateNumberOfRooms()));
@@ -91,5 +113,41 @@ public class DetailFragment extends Fragment {
             detailNumberOfBedrooms.setText(String.valueOf(estate.getEstateNbrOfBedrooms()));
             detailLocation.setText(estate.getEstateAddress());
         }
+    }
+
+    private void setPositionFromAddress(String address){
+        if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(requireContext()))) {
+            String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address.replace(' ', '+') + "&key=" + BuildConfig.MAPS_API_KEY;
+            //execute query
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+                String urlRequestResult = Utils.urlRequest(url);
+                try {
+                    JSONObject resultObject = new JSONObject(urlRequestResult);
+                    JSONArray results = resultObject.getJSONArray("results");
+                    JSONObject resultBody = results.getJSONObject(0);
+                    JSONObject geometry = resultBody.getJSONObject("geometry");
+                    JSONObject location = geometry.getJSONObject("location");
+                    String lat = location.optString("lat");
+                    String lng = location.optString("lng");
+                    estate.setLat(lat);
+                    estate.setLng(lng);
+                    estateViewModel.updateEstate(estate);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), R.string.no_def_gps , Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setPointsOfInterest(String lat, String lng) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            String interests = Utils.getPointsOfInterest(lat, lng, getContext());
+            estate.setPointsOfInterest(interests);
+            estateViewModel.updateEstate(estate);
+        });
     }
 }

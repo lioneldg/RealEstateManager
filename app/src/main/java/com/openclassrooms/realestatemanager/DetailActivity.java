@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,14 +22,22 @@ import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.viewmodel.Injection;
 import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DetailActivity extends AppCompatActivity {
     @NonNull
     private final ArrayList<Estate> estates = new ArrayList<>();
+    private Estate estate;
     private EstateViewModel estateViewModel;
     private TextView detailDescription;
+    private TextView detailPointsOfInterestTitle;
+    private TextView detailPointsOfInterest;
     private TextView detailSurface;
     private TextView detailNumberOfRooms;
     private TextView detailNumberOfBathrooms;
@@ -41,6 +51,8 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         position = getIntent().getIntExtra("position", 0);
         FragmentDetailBinding binding = FragmentDetailBinding.inflate(getLayoutInflater());
+        detailPointsOfInterestTitle = binding.detailPointsOfInterestTitle;
+        detailPointsOfInterest = binding.detailPointsOfInterest;
         detailDescription = binding.detailDescription;
         detailSurface = binding.detailSurface;
         detailNumberOfRooms = binding.detailNumberOfRooms;
@@ -86,8 +98,20 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void setCurrentEstate(int position) {
-        Estate estate = estates.get(position);
+        estate = estates.get(position);
+        if(estate.getLat() == null || estate.getLng() == null){
+            setPositionFromAddress(estate.getEstateAddress());
+        }
+        if(estate.getPointsOfInterest() == null && estate.getLat() != null && estate.getLng() != null) {
+            setPointsOfInterest(estate.getLat(), estate.getLng());
+        }
         setAdapter(estate);
+        if(estate.getPointsOfInterest() != null) {
+            detailPointsOfInterestTitle.setVisibility(View.VISIBLE);
+            detailPointsOfInterest.setText(estate.getPointsOfInterest());
+        } else {
+            detailPointsOfInterestTitle.setVisibility(View.GONE);
+        }
         detailDescription.setText(estate.getEstateFullDescription());
         detailSurface.setText(String.valueOf(estate.getEstateSurface()));
         detailNumberOfRooms.setText(String.valueOf(estate.getEstateNumberOfRooms()));
@@ -128,5 +152,45 @@ public class DetailActivity extends AppCompatActivity {
         Intent myIntent = new Intent(DetailActivity.this, EditEstateActivity.class);
         myIntent.putExtra("position", position);
         startActivity(myIntent);
+    }
+
+    private void setPositionFromAddress(String address){
+        if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(this))) {
+            String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address.replace(' ', '+') + "&key=" + BuildConfig.MAPS_API_KEY;
+            //execute query
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+                String urlRequestResult = Utils.urlRequest(url);
+                try {
+                    try {
+                        JSONObject resultObject = new JSONObject(urlRequestResult);
+                        JSONArray results = resultObject.getJSONArray("results");
+                        JSONObject resultBody = results.getJSONObject(0);
+                        JSONObject geometry = resultBody.getJSONObject("geometry");
+                        JSONObject location = geometry.getJSONObject("location");
+                        String lat = location.optString("lat");
+                        String lng = location.optString("lng");
+                        estate.setLat(lat);
+                        estate.setLng(lng);
+                        estateViewModel.updateEstate(estate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(this, R.string.no_def_gps , Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setPointsOfInterest(String lat, String lng) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            String interests = Utils.getPointsOfInterest(lat, lng, this);
+            estate.setPointsOfInterest(interests);
+            estateViewModel.updateEstate(estate);
+        });
     }
 }

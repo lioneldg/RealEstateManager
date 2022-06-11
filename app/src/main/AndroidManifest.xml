@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name="com.openclassrooms.realestatemanager.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -26,7 +27,7 @@
         <activity android:name="com.openclassrooms.realestatemanager.EditEstateActivity" />
         <activity android:name="com.openclassrooms.realestatemanager.DetailActivity" />
         <provider
-            android:authorities="com.openclassrooms.realestatemanager.provider.EstatesContentProvider"
+            android:authorities="com.openclassrooms.realestatemanager"
             android:name=".provider.EstatesContentProvider"
             android:exported="true"/>
     </application>

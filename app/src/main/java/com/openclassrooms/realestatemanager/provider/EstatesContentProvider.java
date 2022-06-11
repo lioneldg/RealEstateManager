@@ -12,7 +12,7 @@ import com.openclassrooms.realestatemanager.database.AppDatabase;
 import com.openclassrooms.realestatemanager.model.Estate;
 
 public class EstatesContentProvider extends ContentProvider {
-    public static final String AUTHORITY = "com.openclassrooms.realestatemanager.provider";
+    public static final String AUTHORITY = "com.openclassrooms.realestatemanager";
 
     public static final String TABLE_NAME = "Estate";
 
