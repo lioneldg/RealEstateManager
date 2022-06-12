@@ -2,10 +2,12 @@ package com.openclassrooms.realestatemanager;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView detailNumberOfBedrooms;
     private TextView detailLocation;
     private RecyclerView detailPhotosRV;
+    private ImageView staticMap;
     private int position;
 
     @Override
@@ -60,6 +63,7 @@ public class DetailActivity extends AppCompatActivity {
         detailNumberOfBedrooms = binding.detailNumberOfBedrooms;
         detailLocation = binding.detailLocation;
         detailPhotosRV = binding.detailPhotosRV;
+        staticMap = binding.staticMap;
         detailPhotosRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         setContentView(binding.getRoot());
         configureViewModel();
@@ -102,9 +106,6 @@ public class DetailActivity extends AppCompatActivity {
         if(estate.getLat() == null || estate.getLng() == null){
             setPositionFromAddress(estate.getEstateAddress());
         }
-        if(estate.getPointsOfInterest() == null && estate.getLat() != null && estate.getLng() != null) {
-            setPointsOfInterest(estate.getLat(), estate.getLng());
-        }
         setAdapter(estate);
         if(estate.getPointsOfInterest() != null) {
             detailPointsOfInterestTitle.setVisibility(View.VISIBLE);
@@ -118,6 +119,10 @@ public class DetailActivity extends AppCompatActivity {
         detailNumberOfBathrooms.setText(String.valueOf(estate.getEstateNbrOfBathrooms()));
         detailNumberOfBedrooms.setText(String.valueOf(estate.getEstateNbrOfBedrooms()));
         detailLocation.setText(estate.getEstateAddress());
+        if(estate.getStaticMapFileName() != null) {
+            Bitmap map = Utils.getBitmapFromFileName(estate.getStaticMapFileName(), 500, this);
+            staticMap.setImageBitmap(map);
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -172,7 +177,7 @@ public class DetailActivity extends AppCompatActivity {
                         String lng = location.optString("lng");
                         estate.setLat(lat);
                         estate.setLng(lng);
-                        estateViewModel.updateEstate(estate);
+                        setPointsOfInterest(lat, lng);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

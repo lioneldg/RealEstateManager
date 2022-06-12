@@ -41,7 +41,7 @@ public class MasterRVAdapter extends RecyclerView.Adapter<MasterRVAdapter.MyView
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         private final ImageView estateImage;
         private final TextView estateType;
-        private final TextView estateCity;
+        private final TextView estateNeighborhood;
         private final TextView estatePrice;
         private int bindPosition;
         private MasterRVFragment masterRVFragment;
@@ -50,7 +50,7 @@ public class MasterRVAdapter extends RecyclerView.Adapter<MasterRVAdapter.MyView
             super(itemView);
             estateImage = itemView.findViewById(R.id.cellImage);
             estateType = itemView.findViewById(R.id.cellTextType);
-            estateCity = itemView.findViewById(R.id.cellTextLocation);
+            estateNeighborhood = itemView.findViewById(R.id.cellTextLocation);
             estatePrice = itemView.findViewById(R.id.cellTextPrice);
             itemView.setOnClickListener(view -> masterRVFragment.setCurrentDetailView(bindPosition));
         }
@@ -69,7 +69,7 @@ public class MasterRVAdapter extends RecyclerView.Adapter<MasterRVAdapter.MyView
                 estateImage.setImageBitmap(photo);
             }
             estateType.setText(estate.getEstateType());
-            estateCity.setText(estate.getEstateCity());
+            estateNeighborhood.setText(estate.getEstateCity());
             estatePrice.setText(String.format("$%s", estate.getEstatePrice()));
         }
     }

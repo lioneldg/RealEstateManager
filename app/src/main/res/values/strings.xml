@@ -19,7 +19,7 @@
     <string name="numberOfBathrooms">Number of bathrooms</string>
     <string name="fullDescription">Full description</string>
     <string name="address">Address</string>
-    <string name="city">City</string>
+    <string name="neighborhood">Neighborhood</string>
     <string name="addPictures">Add pictures</string>
     <string name="picture_of_estate">Picture of estate</string>
     <string name="sold">Sold !!!</string>

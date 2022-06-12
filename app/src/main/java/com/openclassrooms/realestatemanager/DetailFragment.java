@@ -1,9 +1,11 @@
 package com.openclassrooms.realestatemanager;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,6 +44,7 @@ public class DetailFragment extends Fragment {
     private TextView detailNumberOfBedrooms;
     private TextView detailLocation;
     private RecyclerView detailPhotosRV;
+    private ImageView staticMap;
     private int currentEstate = 0;
 
     @Override
@@ -56,6 +60,7 @@ public class DetailFragment extends Fragment {
         detailNumberOfBedrooms = binding.detailNumberOfBedrooms;
         detailLocation = binding.detailLocation;
         detailPhotosRV = binding.detailPhotosRV;
+        staticMap = binding.staticMap;
         detailPhotosRV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         if(Utils.isTablet(requireContext()) && Utils.isLandscapeOrientation(requireContext())) {
             configureViewModel();
@@ -96,9 +101,6 @@ public class DetailFragment extends Fragment {
             if(estate.getLat() == null || estate.getLng() == null){
                 setPositionFromAddress(estate.getEstateAddress());
             }
-            if(estate.getPointsOfInterest() == null && estate.getLat() != null && estate.getLng() != null) {
-                setPointsOfInterest(estate.getLat(), estate.getLng());
-            }
             setAdapter(estate);
             if(estate.getPointsOfInterest() != null) {
                 detailPointsOfInterestTitle.setVisibility(View.VISIBLE);
@@ -112,6 +114,10 @@ public class DetailFragment extends Fragment {
             detailNumberOfBathrooms.setText(String.valueOf(estate.getEstateNbrOfBathrooms()));
             detailNumberOfBedrooms.setText(String.valueOf(estate.getEstateNbrOfBedrooms()));
             detailLocation.setText(estate.getEstateAddress());
+            if(estate.getStaticMapFileName() != null) {
+                Bitmap map = Utils.getBitmapFromFileName(estate.getStaticMapFileName(), 500, requireContext());
+                staticMap.setImageBitmap(map);
+            }
         }
     }
 
@@ -132,7 +138,7 @@ public class DetailFragment extends Fragment {
                     String lng = location.optString("lng");
                     estate.setLat(lat);
                     estate.setLng(lng);
-                    estateViewModel.updateEstate(estate);
+                    setPointsOfInterest(lat, lng);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -14,7 +14,7 @@
     <string name="numberOfBathrooms">Nombre de salle de bain</string>
     <string name="fullDescription">Description complète</string>
     <string name="address">Adresse</string>
-    <string name="city">Ville</string>
+    <string name="neighborhood">Quartier</string>
     <string name="addPictures">Ajouter des photos</string>
     <string name="media">Media</string>
     <string name="description">Description</string>

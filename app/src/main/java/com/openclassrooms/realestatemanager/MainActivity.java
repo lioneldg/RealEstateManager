@@ -14,8 +14,7 @@ import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    //points d'interets , date d'entré , date de vente !!!!!!! jeudi 7 juin
-    //map image de chaque bien !!!!!!!!! jeudi 7 juin
+    //Afficher date d'entrée , date de vente si vendu !!!!!!! jeudi 7 juin
     //Map des biens jeudi 16 juin
     //recherche d'estates!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! jeudi 23 juin
     //simulateur de crédit!!!!!!!!!!!!!!!!!!! jeudi 30 juin

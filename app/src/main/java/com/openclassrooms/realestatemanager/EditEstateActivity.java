@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager;
 
 import static com.openclassrooms.realestatemanager.Utils.REQUEST_IMAGE_CAPTURE;
 import static com.openclassrooms.realestatemanager.Utils.REQUEST_IMAGE_PICK;
+import static com.openclassrooms.realestatemanager.Utils.storeBitmap;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,6 +30,7 @@ import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -150,7 +152,6 @@ public class EditEstateActivity extends AppCompatActivity {
                 newEstate.setEntryDate(entryDate);
                 newEstate.setSoldDate(soldDate);
                 if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(this))) {
-                    textAddress.setError(null);
                     setPositionFromAddress(newEstate.getEstateAddress());
                 } else {
                     Toast.makeText(this, R.string.no_def_gps , Toast.LENGTH_LONG).show();
@@ -189,7 +190,6 @@ public class EditEstateActivity extends AppCompatActivity {
         //execute query
         ArrayList <String> pos = new ArrayList<>();
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        textAddress.setError(getString(R.string.address_not_found)); //set error everytime because if address is ok the activity will close
         executor.execute(() -> {
             String urlRequestResult = Utils.urlRequest(url);
             try {
@@ -203,12 +203,9 @@ public class EditEstateActivity extends AppCompatActivity {
                     pos.add(location.optString("lng"));
                     newEstate.setLat(pos.get(0));
                     newEstate.setLng(pos.get(1));
-                    if (isEditionMode) {
-                        estateViewModel.updateEstate(newEstate);
-                    } else {
-                        estateViewModel.createEstate(newEstate);
-                    }
                     setPointsOfInterest(pos.get(0), pos.get(1));
+                } else {
+                    //textAddress.setError(getString(R.string.address_not_found));!!!!!!!!!!!!!voir avec Denis
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -221,8 +218,22 @@ public class EditEstateActivity extends AppCompatActivity {
         executor.execute(() -> {
             String interests = Utils.getPointsOfInterest(lat, lng, this);
             newEstate.setPointsOfInterest(interests);
-            estateViewModel.updateEstate(newEstate);
-            this.finish();
+            setStaticMap(lat, lng);
+        });
+    }
+
+    private void setStaticMap(String lat, String lng) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            Bitmap mapBitmap = Utils.getStaticMap(lat, lng);
+            String staticMapFileName = Utils.storeBitmap(this, mapBitmap);
+            newEstate.setStaticMapFileName(staticMapFileName);
+            if (isEditionMode) {
+                estateViewModel.updateEstate(newEstate);
+            } else {
+                estateViewModel.createEstate(newEstate);
+            }
+            finish();
         });
     }
 

@@ -14,6 +14,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -41,6 +42,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by Philippe on 21/02/2018.
@@ -65,7 +70,7 @@ public class Utils {
     public static Date getTodayDate(){
         return new Date();
     }
-
+//utiliser ca dans Estate pour recupérer la date!!!!!!!!!!!!!!!!!!!!!!!!!!
     /**
      * Conversion de la date d'aujourd'hui en un format plus approprié
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
@@ -407,5 +412,40 @@ public class Utils {
             e.printStackTrace();
         }
         return pointsOfInterestString;
+    }
+
+    public static Bitmap getStaticMap(String lat, String lng) {
+        String url = "https://maps.googleapis.com/maps/api/staticmap?center="+lat+","+lng+"&zoom=15&size=500x500&format=jpg&markers="+lat+","+lng+"&key="+MAPS_API_KEY;
+        //execute query
+        Bitmap result = null;
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Bitmap> future = executor.submit(() -> {
+            try {
+                URL requestUrl = new URL(url);
+                HttpURLConnection connection = (HttpURLConnection)requestUrl.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    InputStream in = new URL(url).openStream();
+                    return BitmapFactory.decodeStream(in);
+                }
+                else {
+                    Log.i("test", "Unsuccessful HTTP Response Code: " + responseCode);
+                }
+            } catch (MalformedURLException e) {
+                Log.e("test", "Error processing Places API URL", e);
+            } catch (IOException e) {
+                Log.e("test", "Error connecting to Places API", e);
+            }
+            return null;
+        });
+        try {
+            result = future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

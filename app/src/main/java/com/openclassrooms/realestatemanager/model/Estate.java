@@ -52,6 +52,8 @@ public class Estate {
 
     private String soldDateStr;
 
+    private String staticMapFileName;
+
     public Estate(){}
 
     public void setId(long id) {
@@ -163,6 +165,10 @@ public class Estate {
         }
     }
 
+    public String getStaticMapFileName() {
+        return staticMapFileName;
+    }
+
     public void setEstateAgent(@NonNull String estateAgent) {
         this.estateAgent = estateAgent;
     }
@@ -245,5 +251,9 @@ public class Estate {
             @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             setSoldDateStr(dateFormat.format(soldDate));
         }
+    }
+
+    public void setStaticMapFileName(String staticMapFileName) {
+        this.staticMapFileName = staticMapFileName;
     }
 }
