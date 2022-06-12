@@ -71,4 +71,6 @@
     <string name="veterinary">veterinary</string>
     <string name="zoo">zoo</string>
     <string name="address_not_found">Address not found</string>
+    <string name="entered_on">"Entered on "</string>
+    <string name="sold_on">"Sold on "</string>
 </resources>

@@ -14,7 +14,7 @@ import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    //Afficher date d'entrée , date de vente si vendu !!!!!!! jeudi 7 juin
+    //Afichage des dates format anglais ou francais
     //Map des biens jeudi 16 juin
     //recherche d'estates!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! jeudi 23 juin
     //simulateur de crédit!!!!!!!!!!!!!!!!!!! jeudi 30 juin

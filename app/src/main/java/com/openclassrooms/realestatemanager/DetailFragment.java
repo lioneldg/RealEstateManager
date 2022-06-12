@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -35,6 +36,7 @@ public class DetailFragment extends Fragment {
     private final ArrayList<Estate> estates = new ArrayList<>();
     private EstateViewModel estateViewModel;
     private Estate estate;
+    private TextView entryAndSoldDate;
     private TextView detailDescription;
     private TextView detailPointsOfInterestTitle;
     private TextView detailPointsOfInterest;
@@ -51,6 +53,7 @@ public class DetailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FragmentDetailBinding binding = FragmentDetailBinding.inflate(getLayoutInflater());
+        entryAndSoldDate = binding.entryAndSoldDate;
         detailPointsOfInterestTitle = binding.detailPointsOfInterestTitle;
         detailPointsOfInterest = binding.detailPointsOfInterest;
         detailDescription = binding.detailDescription;
@@ -98,10 +101,13 @@ public class DetailFragment extends Fragment {
         currentEstate = position;
         if(estates.size() > 0) {
             estate = estates.get(position);
+            setAdapter(estate);
+            String entryDate = estate.getEntryDateStr();
+            String soldDate = estate.getSoldDateStr();
+            entryAndSoldDate.setText(soldDate == null ? getString(R.string.entered_on) + entryDate : getString(R.string.sold_on) + soldDate);
             if(estate.getLat() == null || estate.getLng() == null){
                 setPositionFromAddress(estate.getEstateAddress());
             }
-            setAdapter(estate);
             if(estate.getPointsOfInterest() != null) {
                 detailPointsOfInterestTitle.setVisibility(View.VISIBLE);
                 detailPointsOfInterest.setText(estate.getPointsOfInterest());

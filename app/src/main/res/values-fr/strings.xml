@@ -72,4 +72,6 @@
     <string name="veterinary">vétérinaire</string>
     <string name="zoo">zoo</string>
     <string name="address_not_found">Adresse non trouvée</string>
+    <string name="entered_on">"Entré le "</string>
+    <string name="sold_on">"Vendu le "</string>
 </resources>
