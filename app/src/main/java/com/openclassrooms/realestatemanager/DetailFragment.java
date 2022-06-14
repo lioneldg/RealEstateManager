@@ -102,9 +102,9 @@ public class DetailFragment extends Fragment {
         if(estates.size() > 0) {
             estate = estates.get(position);
             setAdapter(estate);
-            String entryDate = estate.getEntryDateStr();
-            String soldDate = estate.getSoldDateStr();
-            entryAndSoldDate.setText(soldDate == null ? getString(R.string.entered_on) + entryDate : getString(R.string.sold_on) + soldDate);
+            String entryDate = Utils.getFormattedDate(new Date(estate.getEntryDate()));
+            String soldDate = Utils.getFormattedDate(new Date(estate.getSoldDate()));
+            entryAndSoldDate.setText(estate.getSoldDate() > 0 ? getString(R.string.sold_on) + soldDate : getString(R.string.entered_on) + entryDate);
             if(estate.getLat() == null || estate.getLng() == null){
                 setPositionFromAddress(estate.getEstateAddress());
             }

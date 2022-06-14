@@ -36,11 +36,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -67,17 +70,17 @@ public class Utils {
         return (int) Math.round(euro * (1/dollarEuroRate));
     }
 
-    public static Date getTodayDate(){
-        return new Date();
+    public static String getSystemLanguage() {
+        return Locale.getDefault().getLanguage();
     }
-//utiliser ca dans Estate pour recupérer la date!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     /**
-     * Conversion de la date d'aujourd'hui en un format plus approprié
+     * Conversion de la date en un format plus approprié
      * NOTE : NE PAS SUPPRIMER, A MONTRER DURANT LA SOUTENANCE
      * @return
      */
     public static String getFormattedDate(Date date){
-        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormat = getSystemLanguage().equals("en") ? new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH) : new SimpleDateFormat("dd/MM/yyyy", Locale.FRENCH);
         return dateFormat.format(date);
     }
 
@@ -185,7 +188,7 @@ public class Utils {
     }
 
     private static File createImageFile(Context context) throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = String.valueOf(System.currentTimeMillis());
         String imageFileName = "JPEG_" + timeStamp + "_";
         return new File(context.getFilesDir(), imageFileName);
     }

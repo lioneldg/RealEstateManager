@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         com.openclassrooms.realestatemanager.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
+        Log.d("!!!", Utils.getSystemLanguage());
         DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentDetail);
         assert detailFragment != null;
         View detailFragmentView = detailFragment.getView();
