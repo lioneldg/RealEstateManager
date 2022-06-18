@@ -76,4 +76,6 @@
     <string name="sold_on">"Vendu le "</string>
     <string name="map">Carte</string>
     <string name="no_internet_connection">Pas de connexion internet.</string>
+    <string name="new_estate_added">Nouveau bien ajouté !!!</string>
+    <string name="estate_amended">Bien modifié !!!</string>
 </resources>

@@ -75,4 +75,6 @@
     <string name="sold_on">"Sold on "</string>
     <string name="map">Map</string>
     <string name="no_internet_connection">No internet connection.</string>
+    <string name="new_estate_added">New estate added !!!</string>
+    <string name="estate_amended">Estate amended !!!</string>
 </resources>

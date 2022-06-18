@@ -146,9 +146,11 @@ public class EditEstateActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.no_def_gps , Toast.LENGTH_LONG).show();
                     if (isEditionMode){
                         estateViewModel.updateEstate(newEstate);
+                        Utils.sendNotification(this, getString(R.string.new_estate_added), false);
                     } else {
                         newEstate.setEntryDate(timestamp);
                         estateViewModel.createEstate(newEstate);
+                        Utils.sendNotification(this, getString(R.string.estate_amended), false);
                     }
                     this.finish();
                 }
@@ -218,10 +220,12 @@ public class EditEstateActivity extends AppCompatActivity {
             newEstate.setStaticMapFileName(staticMapFileName);
             if (isEditionMode) {
                 estateViewModel.updateEstate(newEstate);
+                Utils.sendNotification(this, getString(R.string.new_estate_added), false);
             } else {
                 long timestamp = System.currentTimeMillis();
                 newEstate.setEntryDate(timestamp);
                 estateViewModel.createEstate(newEstate);
+                Utils.sendNotification(this, getString(R.string.estate_amended), false);
             }
             finish();
         });

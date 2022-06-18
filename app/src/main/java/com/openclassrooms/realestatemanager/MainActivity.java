@@ -1,19 +1,14 @@
 package com.openclassrooms.realestatemanager;
 
-import static android.content.ContentValues.TAG;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +18,6 @@ import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    //Une fois l'ajout d'un bien correctement effectué, un message de notification doit apparaitre sur le téléphone de l'utilisateur afin de lui indiquer que tout s'est bien passé.
     //recherche d'estates!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! jeudi 23 juin
     //simulateur de crédit!!!!!!!!!!!!!!!!!!! jeudi 30 juin
     //tests unitaires!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
