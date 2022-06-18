@@ -1,13 +1,21 @@
 package com.openclassrooms.realestatemanager;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding;
@@ -15,18 +23,19 @@ import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    //Afichage des dates format anglais ou francais
-    //Map des biens jeudi 16 juin
+    //Une fois l'ajout d'un bien correctement effectué, un message de notification doit apparaitre sur le téléphone de l'utilisateur afin de lui indiquer que tout s'est bien passé.
     //recherche d'estates!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! jeudi 23 juin
     //simulateur de crédit!!!!!!!!!!!!!!!!!!! jeudi 30 juin
     //tests unitaires!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ActivityResultLauncher<Intent> mStartForResult;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.openclassrooms.realestatemanager.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        this.registerMapActivityForResult();
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        Log.d("!!!", Utils.getSystemLanguage());
         DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentDetail);
         assert detailFragment != null;
         View detailFragmentView = detailFragment.getView();
@@ -37,6 +46,19 @@ public class MainActivity extends AppCompatActivity {
             assert detailFragmentView != null;
             detailFragmentView.setVisibility(View.GONE);
         }
+    }
+
+    private void registerMapActivityForResult() {
+        mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent intent = result.getData();
+                        int detail = Objects.requireNonNull(intent).getIntExtra("detailId", 0);
+                        MasterRVFragment masterRVFragment = (MasterRVFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentMaster);
+                        assert masterRVFragment != null;
+                        masterRVFragment.setCurrentDetailView(detail);
+                    }
+                });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -59,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_search:
                 /* DO SEARCH */
                 return true;
+            case R.id.action_map:
+                this.openMapActivity();
+                return  true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -66,6 +91,15 @@ public class MainActivity extends AppCompatActivity {
     private void addEstate(){
         Intent myIntent = new Intent(MainActivity.this, EditEstateActivity.class);
         startActivity(myIntent);
+    }
+
+    private void openMapActivity() {
+        if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(this))) {
+            Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
+            mStartForResult.launch(myIntent);
+        } else {
+            Toast.makeText(this, R.string.no_internet_connection , Toast.LENGTH_LONG).show();
+        }
     }
 
     private void editEstate(){

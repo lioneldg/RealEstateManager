@@ -6,10 +6,12 @@
         <entry key="app/src/main/res/layout/activity_add_estate.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_edit_estate.xml" value="0.3695652173913043" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/activity_map.xml" value="0.35520833333333335" />
         <entry key="app/src/main/res/layout/detail_list_cell.xml" value="0.370018115942029" />
         <entry key="app/src/main/res/layout/fragment_add_estate.xml" value="0.5457427536231884" />
         <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_estate_rv.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_map.xml" value="0.35520833333333335" />
         <entry key="app/src/main/res/layout/list_cell.xml" value="0.5457427536231884" />
         <entry key="app/src/main/res/layout/master_list_cell.xml" value="0.5427083333333333" />
         <entry key="app/src/main/res/layout/photos_list_cell.xml" value="0.23055555555555557" />

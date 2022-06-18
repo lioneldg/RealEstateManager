@@ -74,4 +74,6 @@
     <string name="address_not_found">Adresse non trouvée</string>
     <string name="entered_on">"Entré le "</string>
     <string name="sold_on">"Vendu le "</string>
+    <string name="map">Carte</string>
+    <string name="no_internet_connection">Pas de connexion internet.</string>
 </resources>

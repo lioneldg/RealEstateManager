@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name = "android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
@@ -15,6 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/MAPS_API_KEY" />
 
         <activity android:name="com.openclassrooms.realestatemanager.MainActivity"
             android:exported="true">
@@ -26,6 +31,7 @@
         </activity>
         <activity android:name="com.openclassrooms.realestatemanager.EditEstateActivity" />
         <activity android:name="com.openclassrooms.realestatemanager.DetailActivity" />
+        <activity android:name="com.openclassrooms.realestatemanager.MapsActivity" />
         <provider
             android:authorities="com.openclassrooms.realestatemanager"
             android:name=".provider.EstatesContentProvider"

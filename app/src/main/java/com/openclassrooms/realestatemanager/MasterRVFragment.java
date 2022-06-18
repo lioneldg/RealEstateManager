@@ -1,10 +1,14 @@
 package com.openclassrooms.realestatemanager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,6 +21,7 @@ import com.openclassrooms.realestatemanager.viewmodel.Injection;
 import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MasterRVFragment extends Fragment {
     private RecyclerView rv;
@@ -24,10 +29,12 @@ public class MasterRVFragment extends Fragment {
     private final ArrayList<Estate> estates = new ArrayList<>();
     private EstateViewModel estateViewModel;
     private int bindPosition;
+    ActivityResultLauncher<Intent> mStartDetailForResult;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.registerDetailActivityForResult();
         FragmentEstateRvBinding binding = FragmentEstateRvBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         rv = binding.estateRv;
@@ -68,6 +75,17 @@ public class MasterRVFragment extends Fragment {
         startActivity(myIntent);
     }
 
+    private void registerDetailActivityForResult() {
+        mStartDetailForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent intent = result.getData();
+                        int detail = Objects.requireNonNull(intent).getIntExtra("detailId", 0);
+                        this.setCurrentDetailView(detail);
+                    }
+                });
+    }
+
     protected void setCurrentDetailView(int bindPosition){
         this.bindPosition = bindPosition;
         DetailFragment detailFragment = (DetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentDetail);
@@ -76,7 +94,7 @@ public class MasterRVFragment extends Fragment {
         } else {
             Intent myIntent = new Intent(requireActivity(), DetailActivity.class);
             myIntent.putExtra("position", bindPosition);
-            startActivity(myIntent);
+            mStartDetailForResult.launch(myIntent);
         }
         setAdapter();
     }
