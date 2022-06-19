@@ -85,7 +85,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.setOnMarkerClickListener(marker -> {
             if(selectedMarker == Integer.parseInt(String.valueOf(marker.getTag()))) {
-                int detailId = Integer.parseInt((String) Objects.requireNonNull(marker.getTag()));
+                int detailId = Integer.parseInt((String) Objects.requireNonNull(marker.getTag())) - 1;
                 Intent respIntent = new Intent();
                 respIntent.putExtra("detailId", detailId);
                 setResult(Activity.RESULT_OK, respIntent);
@@ -133,9 +133,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     } else {
                         mMap.getUiSettings().setMyLocationButtonEnabled(false);
                     }
+                    String stringListEstatesId = getIntent().getStringExtra("stringListEstatesId");
+                    ArrayList<String> arrayListEstateId = Utils.fromStringListToArrayList(stringListEstatesId);
                     for(int i = 0; i < estates.size(); i++) {
-                        LatLng position = new LatLng(Double.parseDouble(estates.get(i).getLat()), Double.parseDouble(estates.get(i).getLng()));
-                        addMarkerOption(position, estates.get(i).getEstateType()+' '+estates.get(i).getEstatePrice()+'€', String.valueOf(i));
+                        if(arrayListEstateId.contains(String.valueOf(estates.get(i).getId()))){
+                            LatLng position = new LatLng(Double.parseDouble(estates.get(i).getLat()), Double.parseDouble(estates.get(i).getLng()));
+                            addMarkerOption(position, estates.get(i).getEstateType() + ' ' + estates.get(i).getEstatePrice() + '$', String.valueOf(estates.get(i).getId()));
+                        }
                     }
                 });
             }

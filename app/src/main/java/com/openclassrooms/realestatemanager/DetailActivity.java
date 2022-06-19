@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -12,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +30,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -54,12 +50,10 @@ public class DetailActivity extends AppCompatActivity {
     private RecyclerView detailPhotosRV;
     private ImageView staticMap;
     private int position;
-    ActivityResultLauncher<Intent> mStartForResult;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.registerMapActivityForResult();
         position = getIntent().getIntExtra("position", 0);
         FragmentDetailBinding binding = FragmentDetailBinding.inflate(getLayoutInflater());
         entryAndSoldDate = binding.entryAndSoldDate;
@@ -137,21 +131,10 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    private void registerMapActivityForResult() {
-        mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent intent = result.getData();
-                        int detail = Objects.requireNonNull(intent).getIntExtra("detailId", 0);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                });
-    }
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.action_bar_menu, menu);
         menu.removeItem(R.id.action_search);
+        menu.removeItem(R.id.action_map);
         return true;
     }
 
@@ -164,12 +147,6 @@ public class DetailActivity extends AppCompatActivity {
             case R.id.action_edit:
                 this.editEstate();
                 return true;
-            case R.id.action_search:
-                /* DO SEARCH */
-                return true;
-            case R.id.action_map:
-                this.openMapActivity();
-                return  true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -178,15 +155,6 @@ public class DetailActivity extends AppCompatActivity {
         finish();
         Intent myIntent = new Intent(DetailActivity.this, EditEstateActivity.class);
         startActivity(myIntent);
-    }
-
-    private void openMapActivity() {
-        if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(this))) {
-            Intent myIntent = new Intent(DetailActivity.this, MapsActivity.class);
-            mStartForResult.launch(myIntent);
-        } else {
-            Toast.makeText(this, R.string.no_internet_connection , Toast.LENGTH_LONG).show();
-        }
     }
 
     private void editEstate(){

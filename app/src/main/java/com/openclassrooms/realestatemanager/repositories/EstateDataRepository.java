@@ -16,6 +16,7 @@ public class EstateDataRepository {
     public LiveData<List<Estate>> getAllEstates(){
         return this.estateDao.getAllEstates();
     }
+    public LiveData<List<Estate>> getFilteredEstates(int isSold) { return this.estateDao.getFilteredEstates(isSold);}
 
     // CREATE
     public void createEstate(Estate estate) {

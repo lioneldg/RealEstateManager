@@ -38,6 +38,10 @@ public class EstateViewModel extends ViewModel {
         return this.allEstates;
     }
 
+    public LiveData<List<Estate>> getFilteredEstates(int isSold) {
+        return estateDataSource.getFilteredEstates(isSold);
+    }
+
     public void createEstate(Estate estate) {
         executor.execute(() -> estateDataSource.createEstate(estate));
     }

@@ -14,7 +14,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding;
+import com.openclassrooms.realestatemanager.model.Estate;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     //simulateur de crédit!!!!!!!!!!!!!!!!!!! jeudi 30 juin
     //tests unitaires!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ActivityResultLauncher<Intent> mStartForResult;
+    MasterRVFragment masterRVFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +76,14 @@ public class MainActivity extends AppCompatActivity {
                 this.editEstate();
                 return true;
             case R.id.action_search:
-                /* DO SEARCH */
+                // DO SEARCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                masterRVFragment = ((MasterRVFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragmentMaster)));
+                if(masterRVFragment.isFiltered) {
+                    masterRVFragment.estatesIdSavedByInstanceState = null;
+                    masterRVFragment.getAllEstates();
+                } else {
+                    masterRVFragment.getFilteredEstates();
+                }
                 return true;
             case R.id.action_map:
                 this.openMapActivity();
@@ -89,7 +99,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void openMapActivity() {
         if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(this))) {
+            masterRVFragment = ((MasterRVFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragmentMaster)));
+            ArrayList<Estate> estates = masterRVFragment.estates;
+            ArrayList<String> estatesId = new ArrayList<>();
+            for(int i = 0; i < estates.size(); i++) {
+                estatesId.add(String.valueOf(estates.get(i).getId()));
+            }
+            String stringListEstatesId = Utils.fromArrayListStringToStringList(estatesId);
             Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
+            myIntent.putExtra("stringListEstatesId", stringListEstatesId);
             mStartForResult.launch(myIntent);
         } else {
             Toast.makeText(this, R.string.no_internet_connection , Toast.LENGTH_LONG).show();

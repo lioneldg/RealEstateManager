@@ -26,15 +26,22 @@ import java.util.Objects;
 public class MasterRVFragment extends Fragment {
     private RecyclerView rv;
     @NonNull
-    private final ArrayList<Estate> estates = new ArrayList<>();
+    protected final ArrayList<Estate> estates = new ArrayList<>();
     private EstateViewModel estateViewModel;
     private int bindPosition;
-    ActivityResultLauncher<Intent> mStartDetailForResult;
+    private ActivityResultLauncher<Intent> mStartDetailForResult;
+    protected boolean isFiltered;
+    protected ArrayList<String> estatesIdSavedByInstanceState;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.registerDetailActivityForResult();
+        if(savedInstanceState != null) {
+            String listEstatesIdSavedByInstanceState = savedInstanceState.getString("stringListEstatesId");
+            estatesIdSavedByInstanceState = Utils.fromStringListToArrayList(listEstatesIdSavedByInstanceState);
+        }
         FragmentEstateRvBinding binding = FragmentEstateRvBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         rv = binding.estateRv;
@@ -42,7 +49,22 @@ public class MasterRVFragment extends Fragment {
         setAdapter();
         configureViewModel();
         getAllEstates();
+        if(savedInstanceState != null) {
+            isFiltered = savedInstanceState.getBoolean("isFiltered");
+        }
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ArrayList<String> estatesId = new ArrayList<>();
+        for(int i = 0; i < estates.size(); i++) {
+            estatesId.add(String.valueOf(estates.get(i).getId()));
+        }
+        String stringListEstatesId = Utils.fromArrayListStringToStringList(estatesId);
+        outState.putString("stringListEstatesId", stringListEstatesId);
+        outState.putBoolean("isFiltered", isFiltered);
     }
 
     private void setAdapter(){
@@ -56,9 +78,15 @@ public class MasterRVFragment extends Fragment {
         this.estateViewModel.init();
     }
 
-    private void getAllEstates(){
+    protected void getAllEstates(){
+        isFiltered = false;
         assert this.estateViewModel.getAllEstates() != null;
         this.estateViewModel.getAllEstates().observe(getViewLifecycleOwner(), this::updateEstatesList);
+    }
+
+    protected void getFilteredEstates() {
+        isFiltered = true;
+        this.estateViewModel.getFilteredEstates(1).observe(getViewLifecycleOwner(), this::updateEstatesList);
     }
 
     private void updateEstatesList(List<Estate> estates) {
@@ -66,8 +94,20 @@ public class MasterRVFragment extends Fragment {
             addEstate();
         }
         this.estates.clear();
-        this.estates.addAll(estates);
-        setAdapter();
+        if(estatesIdSavedByInstanceState != null) {
+            for (int i = 0; i < estates.size(); i++) {
+                if (estatesIdSavedByInstanceState.contains(String.valueOf(estates.get(i).getId()))) {
+                    this.estates.add(estates.get(i));
+                }
+            }
+        } else {
+            this.estates.addAll(estates);
+        }
+        if(Utils.isTablet(requireContext()) && Utils.isLandscapeOrientation(requireContext())) {
+            setCurrentDetailView((int) this.estates.get(0).getId() - 1);
+        } else {
+            setAdapter();
+        }
     }
 
     private void addEstate(){
@@ -87,9 +127,10 @@ public class MasterRVFragment extends Fragment {
     }
 
     protected void setCurrentDetailView(int bindPosition){
-        this.bindPosition = bindPosition;
         DetailFragment detailFragment = (DetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentDetail);
-        if(detailFragment != null && detailFragment.isVisible()){
+        this.bindPosition = bindPosition;
+        if(Utils.isTablet(requireContext()) && Utils.isLandscapeOrientation(requireContext())){
+            assert detailFragment != null;
             detailFragment.setCurrentEstate(bindPosition);
         } else {
             Intent myIntent = new Intent(requireActivity(), DetailActivity.class);

@@ -31,5 +31,5 @@
         app:layout_constraintLeft_toLeftOf="@+id/detailPhotoCell"
         app:layout_constraintBottom_toBottomOf="@+id/detailPhotoCell"
         app:layout_constraintRight_toRightOf="@+id/detailPhotoCell"
-        android:textSize="30sp"/>
+        android:textSize="27sp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

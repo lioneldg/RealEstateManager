@@ -35,7 +35,7 @@ public class MasterRVAdapter extends RecyclerView.Adapter<MasterRVAdapter.MyView
 
     public void onBindViewHolder(@NonNull MasterRVAdapter.MyViewHolder holder, int position) {
         Estate estate = estates.get(position);
-        holder.display(estate, position, masterRVFragment);
+        holder.display(estate, masterRVFragment);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -55,11 +55,11 @@ public class MasterRVAdapter extends RecyclerView.Adapter<MasterRVAdapter.MyView
             itemView.setOnClickListener(view -> masterRVFragment.setCurrentDetailView(bindPosition));
         }
 
-        public void display(Estate estate, int bindPosition, MasterRVFragment masterRVFragment) {
+        public void display(Estate estate, MasterRVFragment masterRVFragment) {
             Context context = masterRVFragment.requireActivity().getApplicationContext();
             this.masterRVFragment = masterRVFragment;
-            this.bindPosition = bindPosition;
             int detailPosition = masterRVFragment.getBindPosition();
+            bindPosition = (int) estate.getId() - 1;
             if(detailPosition == bindPosition && Utils.isTablet(context) && Utils.isLandscapeOrientation(context)){
                 itemView.setBackgroundColor(itemView.getResources().getColor(R.color.colorSelection));
             }

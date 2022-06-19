@@ -22,6 +22,9 @@ public interface EstateDao {
     @Query("SELECT * FROM estate")
     Cursor getAllEstatesWithCursor();
 
+    @Query("SELECT * FROM estate WHERE :isSold = isSold")
+    LiveData<List<Estate>> getFilteredEstates(int isSold);
+
     // CREATE
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addEstate(Estate estate);
