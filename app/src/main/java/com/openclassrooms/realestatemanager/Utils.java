@@ -507,4 +507,10 @@ public class Utils {
         String NOTIFICATION_TAG = "REALESTATEMANAGERNOTIF";
         notificationManager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, notificationBuilder.build());
     }
+
+    public static long getTimestampXMonthsAgo(int nbrMonths) {
+        long currentTimestamp = System.currentTimeMillis();
+        long monthToMillis = (long) (nbrMonths * 30.5 * 24 * 60 * 60 * 1000);
+        return currentTimestamp - monthToMillis;
+    }
 }

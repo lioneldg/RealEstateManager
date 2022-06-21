@@ -16,7 +16,9 @@ public class EstateDataRepository {
     public LiveData<List<Estate>> getAllEstates(){
         return this.estateDao.getAllEstates();
     }
-    public LiveData<List<Estate>> getFilteredEstates(int isSold) { return this.estateDao.getFilteredEstates(isSold);}
+    public LiveData<List<Estate>> getFilteredEstates(String estateAgent, String estateType, int minPrice, int maxPrice, int minSurface, int maxSurface, int minRooms, int maxRooms, int minBedrooms, int maxBedrooms, int minBathrooms, int maxBathrooms, int soldReq1, int soldReq2, long since) {
+        return this.estateDao.getFilteredEstates(estateAgent, estateType, minPrice, maxPrice, minSurface, maxSurface, minRooms, maxRooms, minBedrooms, maxBedrooms, minBathrooms, maxBathrooms, soldReq1, soldReq2, since);
+    }
 
     // CREATE
     public void createEstate(Estate estate) {

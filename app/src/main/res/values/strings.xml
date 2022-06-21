@@ -77,4 +77,20 @@
     <string name="no_internet_connection">No internet connection.</string>
     <string name="new_estate_added">New estate added !!!</string>
     <string name="estate_amended">Estate amended !!!</string>
+    <string name="filter_your_estates">Filter your estates</string>
+    <string name="minimum_price">Min price</string>
+    <string name="maximum_price">Max price</string>
+    <string name="minimum_surface">Min surface</string>
+    <string name="maximum_surface">Max surface</string>
+    <string name="minimum_number_of_rooms">Min rooms</string>
+    <string name="maximum_number_of_rooms">Max rooms</string>
+    <string name="minimum_number_of_bedrooms">Min bedrooms</string>
+    <string name="maximum_number_of_bedrooms">Max bedrooms</string>
+    <string name="minimum_number_of_bathrooms">Min bathrooms</string>
+    <string name="maximum_number_of_bathrooms">Max bathrooms</string>
+    <string name="all">All</string>
+    <string name="sold_only">Sold only</string>
+    <string name="not_sold_only">Not sold only</string>
+    <string name="since_in_month">Since (in month)</string>
+    <string name="no_result">No result</string>
 </resources>

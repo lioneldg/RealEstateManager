@@ -78,4 +78,20 @@
     <string name="no_internet_connection">Pas de connexion internet.</string>
     <string name="new_estate_added">Nouveau bien ajouté !!!</string>
     <string name="estate_amended">Bien modifié !!!</string>
+    <string name="filter_your_estates">Filtrez vos biens</string>
+    <string name="minimum_price">Prix min</string>
+    <string name="minimum_surface">Surface min</string>
+    <string name="maximum_surface">Surface max</string>
+    <string name="maximum_price">Prix max</string>
+    <string name="minimum_number_of_rooms">Pièces min</string>
+    <string name="maximum_number_of_rooms">Pièces max</string>
+    <string name="minimum_number_of_bedrooms">Chambres min</string>
+    <string name="maximum_number_of_bedrooms">Chambres max</string>
+    <string name="minimum_number_of_bathrooms">Salle de bain min</string>
+    <string name="maximum_number_of_bathrooms">Salle de bain max</string>
+    <string name="all">Tout</string>
+    <string name="sold_only">Vendu</string>
+    <string name="not_sold_only">Non vendu</string>
+    <string name="since_in_month">Depuis (en mois)</string>
+    <string name="no_result">Pas de résultat</string>
 </resources>

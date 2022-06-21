@@ -3,10 +3,6 @@ package com.openclassrooms.realestatemanager.model;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import com.openclassrooms.realestatemanager.Utils;
-
-import java.util.Calendar;
-import java.util.Date;
 
 @Entity
 public class Estate {

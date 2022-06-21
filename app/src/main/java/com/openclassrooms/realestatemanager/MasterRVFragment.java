@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -84,29 +88,34 @@ public class MasterRVFragment extends Fragment {
         this.estateViewModel.getAllEstates().observe(getViewLifecycleOwner(), this::updateEstatesList);
     }
 
-    protected void getFilteredEstates() {
+    protected void getFilteredEstates(String estateAgent, String estateType, int minPrice, int maxPrice, int minSurface, int maxSurface, int minRooms, int maxRooms, int minBedrooms, int maxBedrooms, int minBathrooms, int maxBathrooms, int soldReq1, int soldReq2, long since) {
         isFiltered = true;
-        this.estateViewModel.getFilteredEstates(1).observe(getViewLifecycleOwner(), this::updateEstatesList);
+        this.estateViewModel.getFilteredEstates(estateAgent, estateType, minPrice, maxPrice, minSurface, maxSurface, minRooms, maxRooms, minBedrooms, maxBedrooms, minBathrooms, maxBathrooms, soldReq1, soldReq2, since).observe(getViewLifecycleOwner(), this::updateEstatesList);
     }
 
     private void updateEstatesList(List<Estate> estates) {
-        if(estates.size() == 0) {
+        if(estates.size() == 0 && !isFiltered) {
             addEstate();
-        }
-        this.estates.clear();
-        if(estatesIdSavedByInstanceState != null) {
-            for (int i = 0; i < estates.size(); i++) {
-                if (estatesIdSavedByInstanceState.contains(String.valueOf(estates.get(i).getId()))) {
-                    this.estates.add(estates.get(i));
+        } else if(estates.size() == 0 && isFiltered) {
+            isFiltered = false;
+            requireActivity().invalidateOptionsMenu();
+            Toast.makeText(getContext(), R.string.no_result , Toast.LENGTH_LONG).show();
+        } else {
+            this.estates.clear();
+            if (estatesIdSavedByInstanceState != null) {
+                for (int i = 0; i < estates.size(); i++) {
+                    if (estatesIdSavedByInstanceState.contains(String.valueOf(estates.get(i).getId()))) {
+                        this.estates.add(estates.get(i));
+                    }
                 }
+            } else {
+                this.estates.addAll(estates);
             }
-        } else {
-            this.estates.addAll(estates);
-        }
-        if(Utils.isTablet(requireContext()) && Utils.isLandscapeOrientation(requireContext())) {
-            setCurrentDetailView((int) this.estates.get(0).getId() - 1);
-        } else {
-            setAdapter();
+            if (Utils.isTablet(requireContext()) && Utils.isLandscapeOrientation(requireContext())) {
+                setCurrentDetailView((int) this.estates.get(0).getId() - 1);
+            } else {
+                setAdapter();
+            }
         }
     }
 

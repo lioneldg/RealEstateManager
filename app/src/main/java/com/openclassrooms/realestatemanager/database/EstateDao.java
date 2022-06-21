@@ -22,8 +22,17 @@ public interface EstateDao {
     @Query("SELECT * FROM estate")
     Cursor getAllEstatesWithCursor();
 
-    @Query("SELECT * FROM estate WHERE :isSold = isSold")
-    LiveData<List<Estate>> getFilteredEstates(int isSold);
+    @Query("SELECT * FROM estate WHERE " +
+            "(estateAgent LIKE :estateAgent) " +
+            "AND (estateType LIKE :estateType) " +
+            "AND (estatePrice BETWEEN :minPrice AND :maxPrice) " +
+            "AND (estateSurface BETWEEN :minSurface AND :maxSurface) " +
+            "AND (estateNumberOfRooms BETWEEN :minRooms AND :maxRooms) " +
+            "AND (estateNbrOfBedrooms BETWEEN :minBedrooms AND :maxBedrooms) " +
+            "AND (estateNbrOfBathrooms BETWEEN :minBathrooms AND :maxBathrooms) " +
+            "AND (isSold BETWEEN :soldReq1 AND :soldReq2) " +
+            "AND (entryDate > :since OR soldDate > :since)")
+    LiveData<List<Estate>> getFilteredEstates(String estateAgent, String estateType, int minPrice, int maxPrice, int minSurface, int maxSurface, int minRooms, int maxRooms, int minBedrooms, int maxBedrooms, int minBathrooms, int maxBathrooms, int soldReq1, int soldReq2, long since);
 
     // CREATE
     @Insert(onConflict = OnConflictStrategy.REPLACE)

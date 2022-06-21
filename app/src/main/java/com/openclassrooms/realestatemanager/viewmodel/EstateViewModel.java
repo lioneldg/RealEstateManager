@@ -38,8 +38,8 @@ public class EstateViewModel extends ViewModel {
         return this.allEstates;
     }
 
-    public LiveData<List<Estate>> getFilteredEstates(int isSold) {
-        return estateDataSource.getFilteredEstates(isSold);
+    public LiveData<List<Estate>> getFilteredEstates(String estateAgent, String estateType, int minPrice, int maxPrice, int minSurface, int maxSurface, int minRooms, int maxRooms, int minBedrooms, int maxBedrooms, int minBathrooms, int maxBathrooms, int soldReq1, int soldReq2, long since) {
+        return estateDataSource.getFilteredEstates(estateAgent, estateType, minPrice, maxPrice, minSurface, maxSurface, minRooms, maxRooms, minBedrooms, maxBedrooms, minBathrooms, maxBathrooms, soldReq1, soldReq2, since);
     }
 
     public void createEstate(Estate estate) {

@@ -32,6 +32,7 @@
         <activity android:name="com.openclassrooms.realestatemanager.EditEstateActivity" />
         <activity android:name="com.openclassrooms.realestatemanager.DetailActivity" />
         <activity android:name="com.openclassrooms.realestatemanager.MapsActivity" />
+        <activity android:name="com.openclassrooms.realestatemanager.FilterActivity" />
         <provider
             android:authorities="com.openclassrooms.realestatemanager"
             android:name=".provider.EstatesContentProvider"
