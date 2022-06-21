@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    //simulateur de crédit!!!!!!!!!!!!!!!!!!! jeudi 30 juin
     //tests unitaires!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ActivityResultLauncher<Intent> mStartMapsForResult;
     private ActivityResultLauncher<Intent> mStartFilterForResult;
@@ -223,6 +222,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_map:
                 this.openMapActivity();
                 return  true;
+            case R.id.action_finance:
+                this.openFinanceSimulator();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -247,6 +249,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, R.string.no_internet_connection , Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void openFinanceSimulator() {
+            Intent myIntent = new Intent(MainActivity.this, FinanceActivity.class);
+            startActivity(myIntent);
     }
 
     private void editEstate(){

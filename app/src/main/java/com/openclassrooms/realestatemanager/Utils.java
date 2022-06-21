@@ -513,4 +513,17 @@ public class Utils {
         long monthToMillis = (long) (nbrMonths * 30.5 * 24 * 60 * 60 * 1000);
         return currentTimestamp - monthToMillis;
     }
+
+    public static double getFinanceMonthlyPayment(int totalAmount, int contribution, double interestRate, int duration) {
+        double interestRateMonthly = (interestRate / 100 / 12);
+        int finalAmount = totalAmount - contribution;
+        return (finalAmount * interestRateMonthly) / (1 - Math.pow(1 + interestRateMonthly, -duration));
+    }
+
+    public static double getCostOfFinancing(int totalAmount, int contribution, double interestRate, int duration) {
+        double monthlyPayment = getFinanceMonthlyPayment(totalAmount, contribution, interestRate, duration);
+        int finalAmount = totalAmount - contribution;
+        double totalPayed = monthlyPayment * duration;
+        return totalPayed - finalAmount;
+    }
 }

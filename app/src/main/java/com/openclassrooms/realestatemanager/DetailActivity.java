@@ -135,6 +135,7 @@ public class DetailActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.action_bar_menu, menu);
         menu.removeItem(R.id.action_search);
         menu.removeItem(R.id.action_map);
+        menu.removeItem(R.id.action_finance);
         return true;
     }
 

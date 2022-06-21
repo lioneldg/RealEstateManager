@@ -20,4 +20,9 @@
         android:icon="@drawable/ic_baseline_map_24"
         android:title="@string/map"
         app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_finance"
+        android:icon="@drawable/ic_baseline_calculate_24"
+        android:title="@string/finance_simulator"
+        app:showAsAction="ifRoom" />
 </menu>

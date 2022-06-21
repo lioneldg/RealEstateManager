@@ -93,4 +93,14 @@
     <string name="not_sold_only">Not sold only</string>
     <string name="since_in_month">Since (in month)</string>
     <string name="no_result">No result</string>
+    <string name="finance_simulator">Finance simulator</string>
+    <string name="total_amount">total amount</string>
+    <string name="contribution">Contribution</string>
+    <string name="interest_rate">Annual interest rate %</string>
+    <string name="duration">Duration (months)</string>
+    <string name="monthly_payment">Monthly payment</string>
+    <string name="by_month">by month</string>
+    <string name="during">during</string>
+    <string name="months">months</string>
+    <string name="total_cost_of_financing">Total cost of financing</string>
 </resources>
