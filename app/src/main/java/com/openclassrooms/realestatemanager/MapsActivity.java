@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -114,7 +113,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 lastKnownLocation = null;
             }
         } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -135,6 +134,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                     String stringListEstatesId = getIntent().getStringExtra("stringListEstatesId");
                     ArrayList<String> arrayListEstateId = Utils.fromStringListToArrayList(stringListEstatesId);
+                    //this is filter to show only needed estates
                     for(int i = 0; i < estates.size(); i++) {
                         if(arrayListEstateId.contains(String.valueOf(estates.get(i).getId()))){
                             LatLng position = new LatLng(Double.parseDouble(estates.get(i).getLat()), Double.parseDouble(estates.get(i).getLng()));
@@ -144,7 +144,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
             }
         } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage(), e);
+            e.printStackTrace();
         }
     }
 

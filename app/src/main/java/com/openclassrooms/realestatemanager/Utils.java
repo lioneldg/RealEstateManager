@@ -36,6 +36,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,10 +65,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-/**
- * Created by Philippe on 21/02/2018.
- */
 
 public class Utils {
     static double dollarEuroRate = 0.812;
@@ -115,11 +112,27 @@ public class Utils {
     }
 
     public static boolean isLetterHyphenAndSpace(String str){
-        return str.matches("[A-Za-z -_]+");
+        boolean isValid = true;
+        for(int i = 0; i < str.length(); i++) {
+            String character = String.valueOf(str.charAt(i));
+            boolean _isValid = character.matches("[A-Za-z -_]") && !isNumber(character);
+            if(!_isValid) {
+                isValid = false;
+            }
+        }
+        return isValid;
     }
 
     public static boolean isAlphanumHyphenAndSpace(String str){
-        return str.matches("[A-Za-z0-9 -_]+");
+        boolean isValid = true;
+        for(int i = 0; i < str.length(); i++) {
+            String character = String.valueOf(str.charAt(i));
+            boolean _isValid = character.matches("[A-Za-z -_]") || isNumber(character);
+            if(!_isValid) {
+                isValid = false;
+            }
+        }
+        return isValid;
     }
 
     public static boolean isNumber(String str){
@@ -150,7 +163,7 @@ public class Utils {
         try {
             activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
-            Log.d(TAG, e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -160,7 +173,7 @@ public class Utils {
         try {
             activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_PICK);
         } catch (ActivityNotFoundException e) {
-            Log.d(TAG, e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -216,9 +229,9 @@ public class Utils {
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
             fos.close();
         } catch (FileNotFoundException e) {
-            Log.d(TAG, "File not found: " + e.getMessage());
+            Log.e(TAG, "File not found: " + e.getMessage());
         } catch (IOException e) {
-            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            Log.e(TAG, "Error accessing file: " + e.getMessage());
         }
         assert file != null;
         return file.getName();
@@ -281,6 +294,29 @@ public class Utils {
                 "&key="+
                 MAPS_API_KEY;
         return urlRequest(placesSearchStr);
+    }
+
+    public static LatLng getPositionFromAddress(String address) {
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address.replace(' ', '+') + "&key=" + BuildConfig.MAPS_API_KEY;
+        LatLng position = null;
+        String urlRequestResult = urlRequest(url);
+        try {
+            JSONObject resultObject = new JSONObject(urlRequestResult);
+            JSONArray results = resultObject.getJSONArray("results");
+            if(results.length() > 0) {
+                JSONObject resultBody = results.getJSONObject(0);
+                JSONObject geometry = resultBody.getJSONObject("geometry");
+                JSONObject location = geometry.getJSONObject("location");
+                String lat = location.optString("lat");
+                String lng = location.optString("lng");
+                if (!lat.equals("") && !lng.equals("")) {
+                    position = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return position;
     }
 
     public static String getPointsOfInterest(String lat, String lng, Context context) {
@@ -508,10 +544,13 @@ public class Utils {
         notificationManager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    public static long getTimestampXMonthsAgo(int nbrMonths) {
-        long currentTimestamp = System.currentTimeMillis();
-        long monthToMillis = (long) (nbrMonths * 30.5 * 24 * 60 * 60 * 1000);
-        return currentTimestamp - monthToMillis;
+    public static long getTimestampXMonthsAgo(Date now, int nbrMonths) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int neededMonth = currentMonth - nbrMonths;
+        calendar.set(calendar.get(Calendar.YEAR), neededMonth, calendar.get(Calendar.DAY_OF_MONTH));
+        return calendar.getTimeInMillis();
     }
 
     public static double getFinanceMonthlyPayment(int totalAmount, int contribution, double interestRate, int duration) {

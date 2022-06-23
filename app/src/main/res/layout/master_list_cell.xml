@@ -11,6 +11,7 @@
         android:id="@+id/cellImage"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_marginRight="10dp"
         android:contentDescription="@string/pictureOfEstate" />
 
     <LinearLayout

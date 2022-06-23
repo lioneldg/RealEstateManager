@@ -15,19 +15,16 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.openclassrooms.realestatemanager.databinding.FragmentDetailBinding;
 import com.openclassrooms.realestatemanager.model.Estate;
 import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.viewmodel.Injection;
 import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -104,7 +101,7 @@ public class DetailFragment extends Fragment {
             setAdapter(estate);
             String entryDate = Utils.getFormattedDate(new Date(estate.getEntryDate()));
             String soldDate = Utils.getFormattedDate(new Date(estate.getSoldDate()));
-            entryAndSoldDate.setText(estate.getSoldDate() > 0 ? getString(R.string.sold_on) + soldDate : getString(R.string.entered_on) + entryDate);
+            entryAndSoldDate.setText(estate.getIsSold() ? getString(R.string.sold_on) + soldDate : getString(R.string.entered_on) + entryDate);
             if(estate.getLat() == null || estate.getLng() == null){
                 setPositionFromAddress(estate.getEstateAddress());
             }
@@ -129,28 +126,20 @@ public class DetailFragment extends Fragment {
 
     private void setPositionFromAddress(String address){
         if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(requireContext()))) {
-            String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address.replace(' ', '+') + "&key=" + BuildConfig.MAPS_API_KEY;
             //execute query
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(() -> {
-                String urlRequestResult = Utils.urlRequest(url);
-                try {
-                    JSONObject resultObject = new JSONObject(urlRequestResult);
-                    JSONArray results = resultObject.getJSONArray("results");
-                    JSONObject resultBody = results.getJSONObject(0);
-                    JSONObject geometry = resultBody.getJSONObject("geometry");
-                    JSONObject location = geometry.getJSONObject("location");
-                    String lat = location.optString("lat");
-                    String lng = location.optString("lng");
-                    estate.setLat(lat);
-                    estate.setLng(lng);
-                    setPointsOfInterest(lat, lng);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                LatLng position = Utils.getPositionFromAddress(address);
+                if(position != null) {
+                    double lat = position.latitude;
+                    double lng = position.longitude;
+                    estate.setLat(String.valueOf(lat));
+                    estate.setLng(String.valueOf(lng));
+                    setPointsOfInterest(String.valueOf(lat), String.valueOf(lng));
                 }
             });
         } else {
-            Toast.makeText(getContext(), R.string.no_def_gps , Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), R.string.no_def_gps , Toast.LENGTH_LONG).show();
         }
     }
 

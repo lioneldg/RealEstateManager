@@ -18,10 +18,10 @@ import com.openclassrooms.realestatemanager.databinding.ActivityMainBinding;
 import com.openclassrooms.realestatemanager.model.Estate;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    //tests unitaires!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ActivityResultLauncher<Intent> mStartMapsForResult;
     private ActivityResultLauncher<Intent> mStartFilterForResult;
     MasterRVFragment masterRVFragment;
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                         if(sinceString.equals("")) {
                             since = 0;
                         } else {
-                            since = Utils.getTimestampXMonthsAgo(Integer.parseInt(sinceString));
+                            since = Utils.getTimestampXMonthsAgo(new Date(),Integer.parseInt(sinceString));
                         }
 
                         masterRVFragment.getFilteredEstates(estateAgent, estateType, minPrice, maxPrice, minSurface, maxSurface, minRooms, maxRooms, minBedrooms, maxBedrooms, minBathrooms, maxBathrooms, soldReq1, soldReq2, since);

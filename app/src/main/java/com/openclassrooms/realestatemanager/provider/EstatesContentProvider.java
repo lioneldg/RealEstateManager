@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.openclassrooms.realestatemanager.database.AppDatabase;
-import com.openclassrooms.realestatemanager.model.Estate;
 
 public class EstatesContentProvider extends ContentProvider {
     public static final String AUTHORITY = "com.openclassrooms.realestatemanager";

@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -13,16 +11,17 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.openclassrooms.realestatemanager.databinding.FragmentEstateRvBinding;
 import com.openclassrooms.realestatemanager.model.Estate;
 import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.viewmodel.Injection;
 import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -96,13 +95,14 @@ public class MasterRVFragment extends Fragment {
     private void updateEstatesList(List<Estate> estates) {
         if(estates.size() == 0 && !isFiltered) {
             addEstate();
-        } else if(estates.size() == 0 && isFiltered) {
+        } else if(estates.size() == 0) {
             isFiltered = false;
             requireActivity().invalidateOptionsMenu();
             Toast.makeText(getContext(), R.string.no_result , Toast.LENGTH_LONG).show();
         } else {
             this.estates.clear();
             if (estatesIdSavedByInstanceState != null) {
+                //this is filter to show only needed estates
                 for (int i = 0; i < estates.size(); i++) {
                     if (estatesIdSavedByInstanceState.contains(String.valueOf(estates.get(i).getId()))) {
                         this.estates.add(estates.get(i));

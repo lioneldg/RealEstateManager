@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.openclassrooms.realestatemanager.databinding.ActivityEditEstateBinding;
@@ -25,8 +26,7 @@ import com.openclassrooms.realestatemanager.model.Estate;
 import com.openclassrooms.realestatemanager.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.viewmodel.Injection;
 import com.openclassrooms.realestatemanager.viewmodel.ViewModelFactory;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -161,46 +161,38 @@ public class EditEstateActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        String fileName = null;
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            String fileName = Utils.storeBitmap(this, imageBitmap);
-            photos.add(fileName);
-            setAdapter();
+            fileName = Utils.storeBitmap(this, imageBitmap);
         }
         else if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK) {
             Uri photoUri = data.getData();
             Bitmap selectedImage = Utils.loadFromUri(photoUri, this);
-            String fileName = Utils.storeBitmap(this, selectedImage);
-            photos.add(fileName);
-            setAdapter();
+            fileName = Utils.storeBitmap(this, selectedImage);
         }
+        photos.add(fileName);
+        setAdapter();
     }
 
     private void setPositionFromAddress(String address) {
-        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address.replace(' ', '+') + "&key=" + BuildConfig.MAPS_API_KEY;
-        //execute query
-        ArrayList <String> pos = new ArrayList<>();
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            String urlRequestResult = Utils.urlRequest(url);
-            try {
-                JSONObject resultObject = new JSONObject(urlRequestResult);
-                JSONArray results = resultObject.getJSONArray("results");
-                if(results.length() > 0) {
-                    JSONObject resultBody = results.getJSONObject(0);
-                    JSONObject geometry = resultBody.getJSONObject("geometry");
-                    JSONObject location = geometry.getJSONObject("location");
-                    pos.add(location.optString("lat"));
-                    pos.add(location.optString("lng"));
-                    newEstate.setLat(pos.get(0));
-                    newEstate.setLng(pos.get(1));
-                    setPointsOfInterest(pos.get(0), pos.get(1));
+        if(Utils.isInternetAvailable(Utils.getActiveNetworkInfo(this))) {
+            //execute query
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+                LatLng position = Utils.getPositionFromAddress(address);
+                if(position != null) {
+                    double lat = position.latitude;
+                    double lng = position.longitude;
+                    newEstate.setLat(String.valueOf(lat));
+                    newEstate.setLng(String.valueOf(lng));
+                    setPointsOfInterest(String.valueOf(lat), String.valueOf(lng));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        } else {
+            Toast.makeText(this, R.string.no_def_gps , Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setPointsOfInterest(String lat, String lng) {
@@ -220,12 +212,12 @@ public class EditEstateActivity extends AppCompatActivity {
             newEstate.setStaticMapFileName(staticMapFileName);
             if (isEditionMode) {
                 estateViewModel.updateEstate(newEstate);
-                Utils.sendNotification(this, getString(R.string.new_estate_added), false);
+                Utils.sendNotification(this, getString(R.string.estate_amended), false);
             } else {
                 long timestamp = System.currentTimeMillis();
                 newEstate.setEntryDate(timestamp);
                 estateViewModel.createEstate(newEstate);
-                Utils.sendNotification(this, getString(R.string.estate_amended), false);
+                Utils.sendNotification(this, getString(R.string.new_estate_added), false);
             }
             finish();
         });
